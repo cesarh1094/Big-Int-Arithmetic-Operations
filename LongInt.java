@@ -1,189 +1,100 @@
 public class LongInt {
-    
+
     // DO NOT CHANGE OR REMOVE THIS LINE (UNTIL STEP 3)
     // This will give a warning about raw types, but you can ignore it for this project
     //private final LongIntList list = new SLLLongIntList();
-    
+
     // USE THIS LINE IN STEP 3
     private final LongIntList list = new ArrayLongIntList();
-    
+
     private boolean isNegative;
 
     private int digitCount;
-	    
-	public LongInt() {
 
-        digitCount = 0;
+    private LongInt() {
+        this.digitCount = 0;
         this.isNegative = false;
+    }
 
-	}
+    private LongInt(boolean isNeg) {
+        isNegative = isNeg;
+    }
 
-    public LongInt(LongIntList l, int digitCount) {
-
+    private LongInt(LongIntList l, int digitCount) {
         Position iterator = l.first();
 
-        while ( iterator != null ){
-
-            list.insertLast(iterator.getValue());
+        while (iterator != null) {
+            this.list.insertLast(iterator.getValue());
             iterator = l.after(iterator);
-
         }
 
         this.digitCount = digitCount;
-        isNegative = false;
-
+        this.isNegative = false;
     }
 
-    public LongInt(boolean isNeg) {
-
-        isNegative = isNeg;
-
-    }
-		
-    public LongInt(String s) {
-
-        /* negative number */
-
-        if( s.charAt(0) == '-' ) {
-
-            isNegative = true;
-
+    private LongInt(String s) {
+        if (s.charAt(0) == '-') {
+            this.isNegative = true;
             s = s.substring(1);
-
-            digitCount = s.length();
-
-            if ( digitCount % 8 == 0 ) {
-
-                for( int i = s.length(); i>=0; i-=8) {
-
-                    if( i > 8 ) {
-                    
-                        list.insertLast( Integer.parseInt(s.substring(i-8, i)) );
-
-                    }
-                    if ( i == 8 ) {
-
-                        list.insertLast( Integer.parseInt(s.substring(0, i)) );
-
-                    }
-
-                }
-
-            }
-
-            else if ( digitCount < 8) {
-
-                list.insertFirst( Integer.parseInt(s) );
-
-            }
-
-            else {
-
-                for (int i= s.length(); i>=0; i-=8) {
- 
-                    if( i >= 8 ) {
-
-                        list.insertLast( Integer.parseInt(s.substring(i-8, i)) );
-
-                    }
-                    if( i <= 8 ) {
-                        
-                        list.insertLast( Integer.parseInt(s.substring(0, i)) );
-
-                    }
-
-                }
-
-            }
-
+        } else {
+            this.isNegative = false;
         }
 
-        /* positive number */
+        this.digitCount = s.length();
 
-        else {
-
-            isNegative = false;
-
-            digitCount = s.length();
-
-            if ( digitCount % 8 == 0 ) {
-
-                for( int i = s.length(); i>=0; i-=8) {
-
-                    if ( i > 8 ) {
-                    
-                        list.insertLast( Integer.parseInt(s.substring(i-8, i)) );
-
-                    }
-
-                    if ( i == 8 ) {
-
-                        list.insertLast(Integer.parseInt(s.substring(0, i)));
-
-                    }
-
-                }
-
-            }
-
-            else if ( digitCount < 8) {
-
-                list.insertFirst( Integer.parseInt(s) );
-
-            }
-
-            else {
-
-                for ( int i = s.length(); i>=0; i-=8) {
- 
-                    if( i >= 8 ) {
-
-                        list.insertLast( Integer.parseInt(s.substring(i-8, i)) );
-
-                    }
-
-                    if( i <= 8 ) {
-                        
-                        list.insertLast( Integer.parseInt(s.substring(0, i)) );
-
-                    }
-
-                }
-
-            }
-            
+        if (this.digitCount < 8) {
+            this.list.insertFirst(Integer.parseInt(s));
+            return;
         }
 
+        if (digitCount % 8 == 0) {
+            for (int i = s.length(); i >= 0; i -= 8) {
+                if (i > 8) {
+                    this.list.insertLast(Integer.parseInt(s.substring(i - 8, i)));
+                }
+
+                if (i == 8) {
+                    this.list.insertLast(Integer.parseInt(s.substring(0, i)));
+                }
+            }
+        } else {
+            for (int i = s.length(); i >= 0; i -= 8) {
+                if (i >= 8) {
+                    this.list.insertLast(Integer.parseInt(s.substring(i - 8, i)));
+                }
+
+                if (i <= 8) {
+                    this.list.insertLast(Integer.parseInt(s.substring(0, i)));
+                }
+            }
+        }
     }
-	    
-    
-    public void output() {
+
+    private void output() {
 
         /* prints LongInt starting from the end of the list */
 
         Position iterator = this.list.last();
 
-        if ( iterator == null ) {
+        if (iterator == null) {
 
             System.out.println("LongInt is empty");
 
-        }
+        } else {
 
-        else {
-
-            if ( this.getSign() ) {
+            if (this.getSign()) {
 
                 System.out.print("-");
 
             }
-                
-            while ( iterator != null ) {
 
-                if ( iterator != this.list.last() ) {
+            while (iterator != null) {
 
-                    if ( LongIntUtils.digits(iterator.getValue()) < 8 ){
+                if (iterator != this.list.last()) {
 
-                        for (int i=0; i<8-LongIntUtils.digits(iterator.getValue()); i++){
+                    if (LongIntUtils.digits(iterator.getValue()) < 8) {
+
+                        for (int i = 0; i < 8 - LongIntUtils.digits(iterator.getValue()); i++) {
 
                             System.out.print(0);
 
@@ -198,83 +109,54 @@ public class LongInt {
 
         }
 
-        System.out.println("\n");                       // line break
+        System.out.println("\n"); // line break
 
     }
-	
-    public boolean getSign() {
 
-        /* isNegative is true if LongInt is negative or false if positive*/
-
-        return isNegative;
-
+    private boolean getSign() {
+        return this.isNegative;
     }
 
     private void setSign(boolean sign) {
-
-        /* sets LongInt isNegative to sign */
-
-        isNegative = sign;
-
+        this.isNegative = sign;
     }
 
-    public int getDigitCount() {
-
-        /* return the number of digits in the calling LongInt */
-
-        Position iterator = this.list.first();
-        int count = 0;                                                 // stores Digit Count
-
-        while ( iterator != null ) {
-
-            if ( ( LongIntUtils.digits(iterator.getValue()) < 8 ) && ( this.list.isLast(iterator) == false ) ) {
-
-                count = count + ( 8 - LongIntUtils.digits(iterator.getValue()) );
-
-            }
-
-            count = count + LongIntUtils.digits(iterator.getValue());
-            iterator =  this.list.after(iterator);
-
-        }
-
-        return count;
-
+    private int getDigitCount() {
+        return this.digitCount;
     }
-    
-    public boolean equalTo(LongInt i) {
+
+    private boolean equalTo(LongInt i) {
 
         Position iterator_this = this.list.first();
 
         Position iterator_i = i.list.first();
 
-
-        /* check if both LongInt have the same digit count and same sign otherwise they're not equal */
-
-        if ( ( this.getDigitCount() == i.getDigitCount() ) && ( this.isNegative == i.isNegative ) ) {
-
-            while( iterator_this != null ) {
-
-                if( iterator_this.getValue() != iterator_i.getValue() ) {
-
-                    return false;
-
-                }
-                    
-                iterator_this = this.list.after(iterator_this);
-
-                iterator_i = i.list.after(iterator_i);
-
-            }
-
-            return true;
+        if (this.isNegative != i.isNegative) {
+            return false;
         }
 
-        return false;
+        if (this.getDigitCount() != i.getDigitCount()) {
+            return false;
+        }
+
+        if (iterator_i.getValue() != iterator_this.getValue()) {
+            return false;
+        }
+
+        while (iterator_this != null) {
+            if (iterator_this.getValue() != iterator_i.getValue()) {
+                return false;
+            }
+
+            iterator_this = this.list.after(iterator_this);
+            iterator_i = i.list.after(iterator_i);
+        }
+
+        return true;
 
     }
-    
-    public boolean lessThan(LongInt i) {
+
+    private boolean lessThan(LongInt i) {
 
         Position iterator_this = this.list.last();
 
@@ -282,7 +164,7 @@ public class LongInt {
 
         /* make sure they aren't equal to each other */
 
-        if( this.equalTo(i) ) {
+        if (this.equalTo(i)) {
 
             return false;
 
@@ -290,92 +172,86 @@ public class LongInt {
 
         /* both LongInts are positive */
 
-        if( ( this.isNegative == false ) && ( i.isNegative == false) ) {
+        if ((this.isNegative == false) && (i.isNegative == false)) {
 
-            if( this.getDigitCount() == i.getDigitCount() ) {
+            if (this.getDigitCount() == i.getDigitCount()) {
 
-                  while ( iterator_this!= null ) {
+                while (iterator_this != null) {
 
-                        if ( iterator_this.getValue() > iterator_i.getValue() )
+                    if (iterator_this.getValue() > iterator_i.getValue())
 
-                            return false;
+                        return false;
 
-                        iterator_this = this.list.before(iterator_this);
+                    iterator_this = this.list.before(iterator_this);
 
-                        iterator_i = i.list.before(iterator_i);
+                    iterator_i = i.list.before(iterator_i);
 
-                  }
+                }
 
-                  return true;
-
-            }
-
-            else if ( this.getDigitCount() < i.getDigitCount() )
-            
                 return true;
-            
+
+            } else if (this.getDigitCount() < i.getDigitCount())
+
+                return true;
+
             else
-            
+
                 return false;
-            
+
         }
 
         /* both LongInts are negative */
 
-        if ( ( this.isNegative == true ) && ( i.isNegative == true) ) {
+        if ((this.isNegative == true) && (i.isNegative == true)) {
 
-            if( this.getDigitCount() == i.getDigitCount() ) {
+            if (this.getDigitCount() == i.getDigitCount()) {
 
-                  while ( iterator_this!= null ) {
+                while (iterator_this != null) {
 
-                        if ( iterator_this.getValue() < iterator_i.getValue() ) {
-                        
-                            return false;
+                    if (iterator_this.getValue() < iterator_i.getValue()) {
 
-                        }
+                        return false;
 
-                        iterator_this = this.list.before(iterator_this);
+                    }
 
-                        iterator_i = i.list.before(iterator_i);
+                    iterator_this = this.list.before(iterator_this);
 
-                  }
+                    iterator_i = i.list.before(iterator_i);
 
-                  return true;
+                }
 
-            }
+                return true;
 
-            else if ( this.getDigitCount() > i.getDigitCount() ) {
-             
-               return true;
+            } else if (this.getDigitCount() > i.getDigitCount()) {
 
-            }
+                return true;
 
-            else
+            } else
                 return false;
 
         }
 
         /* if the calling LongInt is negative and i is positive */
 
-        if ( ( this.isNegative == true ) && ( i.isNegative == false ) ) {
+        if ((this.isNegative == true) && (i.isNegative == false)) {
 
             return true;
 
         }
 
         /* if the calling LongInt is positive and i is negative */
- 
-        if ( ( this.isNegative == true ) && ( i.isNegative == false ) ) {
+
+        if ((this.isNegative == true) && (i.isNegative == false)) {
 
             return false;
 
         }
 
-        return false;        
+        return false;
 
     }
 
-    public boolean greaterThan(LongInt i) {
+    private boolean greaterThan(LongInt i) {
 
         Position iterator_this = this.list.last();
 
@@ -383,7 +259,7 @@ public class LongInt {
 
         /* make sure LongInts aren't equal to each other */
 
-        if( this.equalTo(i) ) {
+        if (this.equalTo(i)) {
 
             return false;
 
@@ -391,57 +267,53 @@ public class LongInt {
 
         /* both LongInts are positive */
 
-        if( ( this.isNegative == false ) && ( i.isNegative == false) ) {
+        if ((this.isNegative == false) && (i.isNegative == false)) {
 
-            if( this.getDigitCount() == i.getDigitCount() ) {
+            if (this.getDigitCount() == i.getDigitCount()) {
 
-                  while ( iterator_this!= null ) {
+                while (iterator_this != null) {
 
-                        if ( iterator_this.getValue() < iterator_i.getValue() ) {
+                    if (iterator_this.getValue() < iterator_i.getValue()) {
 
-                            return false;
+                        return false;
 
-                        }
+                    }
 
-                        iterator_this = this.list.before(iterator_this);
+                    iterator_this = this.list.before(iterator_this);
 
-                        iterator_i = i.list.before(iterator_i);
+                    iterator_i = i.list.before(iterator_i);
 
-                  }
+                }
 
-                  return true;
+                return true;
 
-            }
-
-            else if ( this.getDigitCount() > i.getDigitCount() )
+            } else if (this.getDigitCount() > i.getDigitCount())
                 return true;
             else
                 return false;
-            
+
         }
 
         /* both LongInts are negative */
 
-       if ( ( this.isNegative == true ) && ( i.isNegative == true ) ) {
+        if ((this.isNegative == true) && (i.isNegative == true)) {
 
-            if( this.getDigitCount() == i.getDigitCount() ) {
+            if (this.getDigitCount() == i.getDigitCount()) {
 
-                  while ( iterator_this!= null ) {
+                while (iterator_this != null) {
 
-                        if ( iterator_this.getValue() > iterator_i.getValue() )
-                            return false;
+                    if (iterator_this.getValue() > iterator_i.getValue())
+                        return false;
 
-                        iterator_this = this.list.before(iterator_this);
+                    iterator_this = this.list.before(iterator_this);
 
-                        iterator_i = i.list.before(iterator_i);
+                    iterator_i = i.list.before(iterator_i);
 
-                  }
+                }
 
-                  return true;
+                return true;
 
-            }
-
-            else if ( this.getDigitCount() < i.getDigitCount() )
+            } else if (this.getDigitCount() < i.getDigitCount())
                 return true;
             else
                 return false;
@@ -450,7 +322,7 @@ public class LongInt {
 
         /* if the calling LongInt is negative and i is positive */
 
-        if ( ( this.isNegative == true ) && ( i.isNegative == false ) ) {
+        if ((this.isNegative == true) && (i.isNegative == false)) {
 
             return false;
 
@@ -458,72 +330,68 @@ public class LongInt {
 
         /* if the calling LongInt is positive and i is negative */
 
-        if ( ( this.isNegative == false ) && ( i.isNegative == true ) ) {
+        if ((this.isNegative == false) && (i.isNegative == true)) {
 
             return true;
-            
-        } 
 
-        return false;    
-        
+        }
+
+        return false;
+
     }
 
-    public LongInt add(LongInt i) {
+    private LongInt add(LongInt i) {
 
         Position iterator_this = this.list.first();
 
         Position iterator_i = i.list.first();
 
         LongInt solution = null;
-        
+
         int overflow = 0;
 
         int node_sum = 0;
 
-        if ( iterator_this == null ) {
+        if (iterator_this == null) {
 
-            solution = new LongInt( i.list, i.getDigitCount());
+            solution = new LongInt(i.list, i.getDigitCount());
             return solution;
 
         }
 
-        if ( iterator_i == null ) {
+        if (iterator_i == null) {
 
-            solution = new LongInt( this.list, this.getDigitCount() );
+            solution = new LongInt(this.list, this.getDigitCount());
             return solution;
 
         }
 
         /* if the two LongInts have the same node length */
 
-        if ( this.list.size() == i.list.size() ) {
+        if (this.list.size() == i.list.size()) {
 
-            if ( this.isNegative == i.isNegative ) {
+            if (this.isNegative == i.isNegative) {
 
-                if ( this.isNegative == true ) {
+                if (this.isNegative == true) {
 
                     solution = new LongInt(this.isNegative);
 
-                }
-
-                else
+                } else
                     solution = new LongInt();
 
-                while ( iterator_this != null ) {
+                while (iterator_this != null) {
 
-                    if ( overflow > 0 ) {
+                    if (overflow > 0) {
 
                         node_sum = iterator_this.getValue() + iterator_i.getValue() + overflow;
 
-                        if ( LongIntUtils.digits(node_sum) > 8 ) {
+                        if (LongIntUtils.digits(node_sum) > 8) {
 
                             solution.list.insertLast(LongIntUtils.underflow(node_sum));
 
                             overflow = LongIntUtils.overflow(node_sum);
 
-                        }
-
-                        else {
+                        } else {
 
                             solution.list.insertLast(node_sum);
 
@@ -531,20 +399,17 @@ public class LongInt {
 
                         }
 
-                    }
-
-                    else {
+                    } else {
 
                         node_sum = iterator_this.getValue() + iterator_i.getValue();
 
-                        if ( LongIntUtils.digits(node_sum) > 8 ) {
+                        if (LongIntUtils.digits(node_sum) > 8) {
 
                             solution.list.insertLast(LongIntUtils.underflow(node_sum));
 
                             overflow = LongIntUtils.overflow(node_sum);
 
-                        }
-                        else {
+                        } else {
 
                             solution.list.insertLast(node_sum);
 
@@ -554,12 +419,12 @@ public class LongInt {
                     }
 
                     iterator_this = this.list.after(iterator_this);
-    
+
                     iterator_i = i.list.after(iterator_i);
 
                 }
 
-                if ( overflow > 0 ) {
+                if (overflow > 0) {
 
                     solution.list.insertLast(overflow);
 
@@ -569,8 +434,7 @@ public class LongInt {
 
             }
 
-            
-            if ( this.isNegative == false && i.isNegative == true ) {
+            if (this.isNegative == false && i.isNegative == true) {
 
                 LongInt temp = new LongInt(i.list, i.digitCount);
 
@@ -581,16 +445,16 @@ public class LongInt {
                 return solution;
 
             }
-            
-            if ( this.isNegative == true && i.isNegative == false ) {
-               
+
+            if (this.isNegative == true && i.isNegative == false) {
+
                 LongInt temp = new LongInt(this.list, this.digitCount);
 
                 temp.setSign(false);
 
                 solution = i.subtract(temp);
 
-                return solution;           
+                return solution;
 
             }
 
@@ -598,35 +462,30 @@ public class LongInt {
 
         /* if the calling LongInt has less digits than i */
 
+        if (this.list.size() < i.list.size()) {
 
-        if ( this.list.size() < i.list.size() ) {
-
-            if ( this.isNegative == i.isNegative ) {
+            if (this.isNegative == i.isNegative) {
 
                 if (this.isNegative == true) {
 
                     solution = new LongInt(this.isNegative);
 
-                }
-
-                else
+                } else
                     solution = new LongInt();
 
-                while ( iterator_this != null ) {
+                while (iterator_this != null) {
 
-                    if ( overflow > 0 ){
+                    if (overflow > 0) {
 
                         node_sum = iterator_this.getValue() + iterator_i.getValue() + overflow;
 
-                        if ( LongIntUtils.digits(node_sum) > 8 ) {
+                        if (LongIntUtils.digits(node_sum) > 8) {
 
                             solution.list.insertLast(LongIntUtils.underflow(node_sum));
 
                             overflow = LongIntUtils.overflow(node_sum);
 
-                        }
-
-                        else {
+                        } else {
 
                             solution.list.insertLast(node_sum);
 
@@ -634,21 +493,17 @@ public class LongInt {
 
                         }
 
-                    }
-
-                    else if ( overflow == 0 ) {
+                    } else if (overflow == 0) {
 
                         node_sum = iterator_this.getValue() + iterator_i.getValue();
 
-                        if ( LongIntUtils.digits(node_sum) > 8 ) {
+                        if (LongIntUtils.digits(node_sum) > 8) {
 
                             solution.list.insertLast(LongIntUtils.underflow(node_sum));
 
                             overflow = LongIntUtils.overflow(node_sum);
 
-                        }
-
-                        else {
+                        } else {
 
                             solution.list.insertLast(node_sum);
 
@@ -658,23 +513,20 @@ public class LongInt {
                     }
 
                     iterator_this = this.list.after(iterator_this);
-            
+
                     iterator_i = i.list.after(iterator_i);
 
                 }
 
-                while ( iterator_i != null ) {
+                while (iterator_i != null) {
 
-
-                    if ( overflow > 0 ) {
+                    if (overflow > 0) {
 
                         solution.list.insertLast(iterator_i.getValue() + overflow);
 
                         overflow = 0;
 
-                    } 
-
-                    else {
+                    } else {
 
                         solution.list.insertLast(iterator_i.getValue());
 
@@ -687,8 +539,8 @@ public class LongInt {
                 return solution;
 
             }
-            
-            if ( this.isNegative == false && i.isNegative == true ) {
+
+            if (this.isNegative == false && i.isNegative == true) {
 
                 LongInt temp = new LongInt(i.list, i.digitCount);
 
@@ -699,8 +551,8 @@ public class LongInt {
                 return solution;
 
             }
-            
-            if ( this.isNegative == true && i.isNegative == false ) {
+
+            if (this.isNegative == true && i.isNegative == false) {
 
                 LongInt temp = new LongInt(this.list, this.digitCount);
 
@@ -708,42 +560,38 @@ public class LongInt {
 
                 solution = i.subtract(temp);
 
-                return solution;           
+                return solution;
 
             }
 
-        } 
+        }
 
         /* if the calling LongInt has more digits than i */
 
-        if ( this.list.size() > i.list.size() ) {
+        if (this.list.size() > i.list.size()) {
 
-            if ( this.isNegative == i.isNegative ) {
+            if (this.isNegative == i.isNegative) {
 
                 if (this.isNegative == true) {
 
                     solution = new LongInt(this.isNegative);
 
-                }
-
-                else
+                } else
                     solution = new LongInt();
 
-                while ( iterator_i != null ) {
+                while (iterator_i != null) {
 
-                    if ( overflow > 0 ) {
+                    if (overflow > 0) {
 
                         node_sum = iterator_this.getValue() + iterator_i.getValue() + overflow;
 
-                        if ( LongIntUtils.digits(node_sum) > 8 ) {
+                        if (LongIntUtils.digits(node_sum) > 8) {
 
                             solution.list.insertLast(LongIntUtils.underflow(node_sum));
 
                             overflow = LongIntUtils.overflow(node_sum);
 
-                        }
-
-                        else {
+                        } else {
 
                             solution.list.insertLast(node_sum);
 
@@ -751,21 +599,17 @@ public class LongInt {
 
                         }
 
-                    }
-
-                    else if ( overflow == 0 ) {
+                    } else if (overflow == 0) {
 
                         node_sum = iterator_this.getValue() + iterator_i.getValue();
 
-                        if ( LongIntUtils.digits(node_sum) > 8 ) {
+                        if (LongIntUtils.digits(node_sum) > 8) {
 
                             solution.list.insertLast(LongIntUtils.underflow(node_sum));
 
                             overflow = LongIntUtils.overflow(node_sum);
 
-                        }
-
-                        else {
+                        } else {
 
                             solution.list.insertLast(node_sum);
 
@@ -775,23 +619,20 @@ public class LongInt {
                     }
 
                     iterator_this = this.list.after(iterator_this);
-            
+
                     iterator_i = i.list.after(iterator_i);
 
                 }
 
-                while ( iterator_this != null ) {
+                while (iterator_this != null) {
 
-
-                    if ( overflow > 0 ) {
+                    if (overflow > 0) {
 
                         solution.list.insertLast(iterator_this.getValue() + overflow);
 
                         overflow = 0;
 
-                    } 
-
-                    else {
+                    } else {
 
                         solution.list.insertLast(iterator_this.getValue());
 
@@ -805,8 +646,7 @@ public class LongInt {
 
             }
 
-
-            if ( this.isNegative == false && i.isNegative == true ) {
+            if (this.isNegative == false && i.isNegative == true) {
 
                 LongInt temp = new LongInt(i.list, i.digitCount);
 
@@ -817,16 +657,16 @@ public class LongInt {
                 return solution;
 
             }
-            
-            if ( this.isNegative == true && i.isNegative == false ) {
-                
-                LongInt temp = new LongInt( this.list, this.digitCount);
+
+            if (this.isNegative == true && i.isNegative == false) {
+
+                LongInt temp = new LongInt(this.list, this.digitCount);
 
                 temp.setSign(false);
 
                 solution = i.subtract(temp);
 
-                return solution;           
+                return solution;
 
             }
 
@@ -836,7 +676,7 @@ public class LongInt {
 
     }
 
-    public LongInt subtract(LongInt i) {
+    private LongInt subtract(LongInt i) {
 
         Position iterator_this = this.list.first();
 
@@ -848,10 +688,9 @@ public class LongInt {
 
         int node_sub = 0;
 
+        if (this.isNegative == false && i.isNegative == false) {
 
-        if ( this.isNegative == false && i.isNegative == false ) {
-
-            if ( this.equalTo(i) ) {
+            if (this.equalTo(i)) {
 
                 solution = new LongInt();
 
@@ -861,63 +700,54 @@ public class LongInt {
 
             }
 
-            if ( this.lessThan(i) ) {
+            if (this.lessThan(i)) {
 
                 solution = new LongInt(true);
 
-                while ( iterator_this != null ) {
+                while (iterator_this != null) {
 
-                    if ( carry ) {
+                    if (carry) {
 
-                        if ( ( iterator_i.getValue() < iterator_this.getValue() )  && ( i.list.after(iterator_i) != null ) ) {
+                        if ((iterator_i.getValue() < iterator_this.getValue()) && (i.list.after(iterator_i) != null)) {
 
                             carry = true;
 
-                            node_sub = ( ( 100000000 + iterator_i.getValue() ) - 1 ) - iterator_this.getValue();
+                            node_sub = ((100000000 + iterator_i.getValue()) - 1) - iterator_this.getValue();
 
                             solution.list.insertLast(node_sub);
 
-                        }
-
-                        else {
+                        } else {
 
                             carry = false;
 
-                            node_sub = ( iterator_i.getValue() - 1 ) - iterator_this.getValue();
+                            node_sub = (iterator_i.getValue() - 1) - iterator_this.getValue();
 
                             solution.list.insertLast(node_sub);
 
                         }
-                    }
+                    } else {
 
-                    else {
-
-                        if ( ( iterator_i.getValue() < iterator_this.getValue() )  && ( i.list.after(iterator_i) != null ) ) {
+                        if ((iterator_i.getValue() < iterator_this.getValue()) && (i.list.after(iterator_i) != null)) {
 
                             carry = true;
 
-                            node_sub = ( 100000000 + iterator_i.getValue() ) - iterator_this.getValue();
+                            node_sub = (100000000 + iterator_i.getValue()) - iterator_this.getValue();
 
                             solution.list.insertLast(node_sub);
 
-                        }
-
-                        else {
+                        } else {
 
                             carry = false;
 
                             node_sub = iterator_i.getValue() - iterator_this.getValue();
 
-                            if ( (( i.list.isLast(iterator_i) == false ) && ( node_sub > 0 )) ) {
-
-                                solution.list.insertLast(node_sub);
-                            
-                            }
-
-                            else if ( this.list.size() == i.list.size() && node_sub != 0 )
+                            if (((i.list.isLast(iterator_i) == false) && (node_sub > 0))) {
 
                                 solution.list.insertLast(node_sub);
 
+                            } else if (this.list.size() == i.list.size() && node_sub != 0)
+
+                                solution.list.insertLast(node_sub);
 
                         }
 
@@ -929,17 +759,15 @@ public class LongInt {
 
                 }
 
-                 while ( iterator_i != null ) {
+                while (iterator_i != null) {
 
-                    if ( carry ) {
+                    if (carry) {
 
-                        solution.list.insertLast(iterator_i.getValue()-1);
+                        solution.list.insertLast(iterator_i.getValue() - 1);
 
                         carry = false;
 
-                    } 
-
-                    else {
+                    } else {
 
                         solution.list.insertLast(iterator_i.getValue());
 
@@ -953,62 +781,55 @@ public class LongInt {
 
             }
 
-            if ( this.greaterThan(i) ) {
+            if (this.greaterThan(i)) {
 
                 solution = new LongInt();
 
-                while ( iterator_i != null ) {
+                while (iterator_i != null) {
 
-                    if ( carry ) {
+                    if (carry) {
 
-                        if ( ( iterator_this.getValue() < iterator_i.getValue() )  && ( this.list.after(iterator_this) != null ) ) {
+                        if ((iterator_this.getValue() < iterator_i.getValue())
+                                && (this.list.after(iterator_this) != null)) {
 
                             carry = true;
 
-                            node_sub = ( ( 100000000 + iterator_this.getValue() ) - 1 ) - iterator_i.getValue();
+                            node_sub = ((100000000 + iterator_this.getValue()) - 1) - iterator_i.getValue();
 
                             solution.list.insertLast(node_sub);
 
-                        }
-
-                        else {
+                        } else {
 
                             carry = false;
 
-                            node_sub = ( iterator_this.getValue() - 1 ) - iterator_i.getValue();
+                            node_sub = (iterator_this.getValue() - 1) - iterator_i.getValue();
 
                             solution.list.insertLast(node_sub);
 
                         }
-                    }
+                    } else {
 
-                    else {
-
-                        if ( ( iterator_this.getValue() < iterator_i.getValue() )  && ( this.list.after(iterator_this) != null ) ) {
+                        if ((iterator_this.getValue() < iterator_i.getValue())
+                                && (this.list.after(iterator_this) != null)) {
 
                             carry = true;
 
-                            node_sub = ( 100000000 + iterator_this.getValue() ) - iterator_i.getValue();
+                            node_sub = (100000000 + iterator_this.getValue()) - iterator_i.getValue();
 
                             solution.list.insertLast(node_sub);
 
-                        }
-
-                        else {
+                        } else {
 
                             carry = false;
 
                             node_sub = iterator_this.getValue() - iterator_i.getValue();
 
-                            if ( ( this.list.isLast(iterator_this) == false ) && ( node_sub > 0 ) ) {
+                            if ((this.list.isLast(iterator_this) == false) && (node_sub > 0)) {
 
                                 solution.list.insertLast(node_sub);
-                            }
+                            } else if (this.list.size() == i.list.size() && node_sub != 0)
 
-                            else if ( this.list.size() == i.list.size()  && node_sub != 0 )
-                                
                                 solution.list.insertLast(node_sub);
-
 
                         }
 
@@ -1020,17 +841,15 @@ public class LongInt {
 
                 }
 
-                 while ( iterator_this != null ) {
+                while (iterator_this != null) {
 
-                    if ( carry ) {
+                    if (carry) {
 
-                        solution.list.insertLast(iterator_this.getValue()-1);
+                        solution.list.insertLast(iterator_this.getValue() - 1);
 
                         carry = false;
 
-                    } 
-
-                    else {
+                    } else {
 
                         solution.list.insertLast(iterator_this.getValue());
 
@@ -1042,13 +861,13 @@ public class LongInt {
 
                 return solution;
 
-            } 
+            }
 
         }
 
-        if ( this.isNegative == true && i.isNegative == true ) {
+        if (this.isNegative == true && i.isNegative == true) {
 
-            if ( this.equalTo(i) ) {
+            if (this.equalTo(i)) {
 
                 solution = new LongInt();
 
@@ -1058,7 +877,7 @@ public class LongInt {
 
             }
 
-            if ( this.greaterThan(i) ) {
+            if (this.greaterThan(i)) {
 
                 LongInt temp_this = new LongInt(this.list, this.digitCount);
 
@@ -1076,7 +895,7 @@ public class LongInt {
 
             }
 
-            if ( this.lessThan(i) ) {
+            if (this.lessThan(i)) {
 
                 LongInt temp_this = new LongInt(this.list, this.digitCount);
 
@@ -1096,7 +915,7 @@ public class LongInt {
 
         }
 
-        if ( this.isNegative == false && i.isNegative == true ) {
+        if (this.isNegative == false && i.isNegative == true) {
 
             LongInt temp = new LongInt(i.list, i.digitCount);
 
@@ -1108,7 +927,7 @@ public class LongInt {
 
         }
 
-        if ( this.isNegative == true && i.isNegative == false ) {
+        if (this.isNegative == true && i.isNegative == false) {
 
             LongInt temp = new LongInt(this.list, this.digitCount);
 
@@ -1125,23 +944,25 @@ public class LongInt {
         return solution;
 
     }
-    
-    public LongInt multiply(LongInt i) {
+
+    private LongInt multiply(LongInt i) {
 
         Position iterator_this = this.list.first();
         Position iterator_i = i.list.first();
 
         LongInt result = new LongInt("0");
-        int zeros_this = 0;                     // # of nodes with padded zeros for this
-        int zeros_i = 0;                        // # of nodes with padded zeros for i
+        int zeros_this = 0; // # of nodes with padded zeros for this
+        int zeros_i = 0; // # of nodes with padded zeros for i
 
-        while ( iterator_this != null ) {
+        while (iterator_this != null) {
 
-            while ( iterator_i != null ) {
+            while (iterator_i != null) {
 
-                result = new LongInt(result.add(karatsuba(iterator_this.getValue(), iterator_i.getValue(), zeros_i)).list, result.add(karatsuba(iterator_this.getValue(), iterator_i.getValue(), zeros_i)).getDigitCount());
-                ///result.printEachNode();
-                zeros_i = zeros_i + 1;
+                result = new LongInt(
+                        result.add(karatsuba(iterator_this.getValue(), iterator_i.getValue(), zeros_i)).list,
+                        result.add(karatsuba(iterator_this.getValue(), iterator_i.getValue(), zeros_i))
+                                .getDigitCount());
+                zeros_i += 1;
                 iterator_i = i.list.after(iterator_i);
 
             }
@@ -1155,7 +976,7 @@ public class LongInt {
 
         /* if either this or i (not and) result is negative */
 
-        if ( ( this.isNegative == false && i.isNegative == true ) || ( this.isNegative == true && i.isNegative == false ) )
+        if ((this.isNegative == false && i.isNegative == true) || (this.isNegative == true && i.isNegative == false))
             result.setSign(true);
         else
             result.setSign(false);
@@ -1164,7 +985,7 @@ public class LongInt {
 
     }
 
-    public static LongInt karatsuba( int c, int d, int n ) {
+    private static LongInt karatsuba(int c, int d, int n) {
 
         /* performs the karatsuba algorithm for muiplying two 8-digit numbers where n is the number nodes with zeros */
 
@@ -1173,82 +994,75 @@ public class LongInt {
         int z1 = LongIntUtils.upperHalf(c) * LongIntUtils.upperHalf(d);
         int z3 = LongIntUtils.lowerHalf(c) * LongIntUtils.lowerHalf(d);
 
-        int z2 = ( ( LongIntUtils.upperHalf(c) + LongIntUtils.lowerHalf(c) ) * ( LongIntUtils.upperHalf(d) + LongIntUtils.lowerHalf(d) ) ) - z1 - z3;
+        int z2 = ((LongIntUtils.upperHalf(c) + LongIntUtils.lowerHalf(c))
+                * (LongIntUtils.upperHalf(d) + LongIntUtils.lowerHalf(d))) - z1 - z3;
         int overflow = LongIntUtils.overflow(z2);
 
         int v1 = z1 + LongIntUtils.upperHalf(z2);
-        int v2 = ( 10000 * LongIntUtils.lowerHalf(z2) ) +  z3;
+        int v2 = (10000 * LongIntUtils.lowerHalf(z2)) + z3;
 
-        if ( overflow > 0 ) {
+        if (overflow > 0) {
 
-            for ( int i = 0; i < n; i++ ) {
-
-                result.list.insertLast(0);
-
-            }
-
-            result.list.insertLast( LongIntUtils.underflow(v2) );
-            result.list.insertLast( v1 + overflow + overflow*10000);
-
-        }
-
-        else {
-
-            for ( int i = 0; i < n; i++ ) {
+            for (int i = 0; i < n; i++) {
 
                 result.list.insertLast(0);
 
             }
 
-            if ( LongIntUtils.overflow(v2) > 0 ) {
+            result.list.insertLast(LongIntUtils.underflow(v2));
+            result.list.insertLast(v1 + overflow + overflow * 10000);
+
+        } else {
+
+            for (int i = 0; i < n; i++) {
+
+                result.list.insertLast(0);
+
+            }
+
+            if (LongIntUtils.overflow(v2) > 0) {
 
                 result.list.insertLast(LongIntUtils.underflow(v2));
                 v1 = v1 + LongIntUtils.overflow(v2);
 
-            }
-
-            else {
+            } else {
 
                 result.list.insertLast(v2);
 
             }
 
-            
-
-            if ( v1 > 0 ){
+            if (v1 > 0) {
 
                 result.list.insertLast(v1);
 
             }
-            
+
         }
 
         return result;
 
     }
 
-    public LongInt power(int p) {
+    private LongInt power(int p) {
 
-
-        if ( p == 0 )
+        if (p == 0)
             return new LongInt("1");
 
-        if ( p == 1 )
+        if (p == 1)
             return this;
 
         /* if p is even */
 
-        if ( ( p % 2 ) == 0 )
-            return this.multiply(this).power(p/2);
+        if ((p % 2) == 0)
+            return this.multiply(this).power(p / 2);
 
         /* if p is odd */
 
-        return this.multiply(this.multiply(this).power( (p-1) / 2));
-        
+        return this.multiply(this.multiply(this).power((p - 1) / 2));
+
     }
 
-    public void printEachNode() {
-
+    private void printEachNode() {
 
         /* print nodes in LongIntList in this format: Node 1: 00000000   Node 2: 00000000 ....... */
 
@@ -1256,14 +1070,13 @@ public class LongInt {
 
         int counter = 1;
 
-        while ( node != null ) {
+        while (node != null) {
 
             System.out.print("Node " + counter++ + ": ");
 
+            if (LongIntUtils.digits(node.getValue()) < 8) {
 
-            if(LongIntUtils.digits(node.getValue())<8) {
-
-                for(int i=0; i<8-LongIntUtils.digits(node.getValue()); i++) {
+                for (int i = 0; i < 8 - LongIntUtils.digits(node.getValue()); i++) {
 
                     System.out.print(0);
 
@@ -1315,7 +1128,8 @@ public class LongInt {
         System.out.println("Initialization of F - Running Time: " + duration_f + " nanoseconds\n");
 
         long startTime_g = System.nanoTime();
-        LongInt g = new LongInt("29302390234702973402973420937420973420937420937234872349872934872893472893749287423847");
+        LongInt g = new LongInt(
+                "29302390234702973402973420937420973420937420937234872349872934872893472893749287423847");
         long duration_g = System.nanoTime() - startTime_g;
         System.out.println("Initialization of G - Running Time: " + duration_g + " nanoseconds\n");
 
@@ -1325,11 +1139,12 @@ public class LongInt {
         System.out.println("Initialization of H - Running Time: " + duration_h + " nanoseconds\n");
 
         long startTime_i = System.nanoTime();
-        LongInt i = new LongInt("8436413168438618351351684694835434894364351846843435168484351684684315384684313846813153843135138413513843813513813138438435153454154515151513141592654543515316848613242587561516511233246174561276521672162416274123076527612");
+        LongInt i = new LongInt(
+                "8436413168438618351351684694835434894364351846843435168484351684684315384684313846813153843135138413513843813513813138438435153454154515151513141592654543515316848613242587561516511233246174561276521672162416274123076527612");
         long duration_i = System.nanoTime() - startTime_i;
         System.out.println("Initialization of I - Running Time: " + duration_i + " nanoseconds\n");
 
-        LongInt [] long_ints = new LongInt[9];
+        LongInt[] long_ints = new LongInt[9];
         long_ints[0] = a;
         long_ints[1] = b;
         long_ints[2] = c;
@@ -1340,7 +1155,7 @@ public class LongInt {
         long_ints[7] = h;
         long_ints[8] = i;
 
-        char [] symbol = new char[9];
+        char[] symbol = new char[9];
         symbol[0] = 'A';
         symbol[1] = 'B';
         symbol[2] = 'C';
@@ -1351,21 +1166,17 @@ public class LongInt {
         symbol[7] = 'H';
         symbol[8] = 'I';
 
-
         /* Step 1: Standard output: Test case output(), test case getDigitCount(), test case getSign(), test case printEachNode() */
 
-        for ( int x = 0; x < long_ints.length; x++) {
+        for (int x = 0; x < long_ints.length; x++) {
 
-                System.out.print("" + symbol[x] + " = ");
-                long_ints[x].output();
-                System.out.println(""+ symbol[x] + " Digit Count: " + long_ints[x].getDigitCount() + "\n");
-                System.out.println("Is '" + symbol[x] + "' negative? " + long_ints[x].getSign() + "\n");
-                long_ints[x].printEachNode();
+            System.out.print("" + symbol[x] + " = ");
+            long_ints[x].output();
+            System.out.println("" + symbol[x] + " Digit Count: " + long_ints[x].getDigitCount() + "\n");
+            System.out.println("Is '" + symbol[x] + "' negative? " + long_ints[x].getSign() + "\n");
+            long_ints[x].printEachNode();
 
         }
-
-
-
 
         /* Steo 1: LongInUtils test cases */
 
@@ -1379,7 +1190,7 @@ public class LongInt {
         System.out.println("Underflow A: " + LongIntUtils.underflow(a_int));
         System.out.println("Underflow B: " + LongIntUtils.underflow(b_int));
         System.out.print("\n");
-    
+
         System.out.println("Upperhalf A: " + LongIntUtils.upperHalf(a_int));
         System.out.println("Lowerhalf A: " + LongIntUtils.lowerHalf(a_int));
         System.out.print("\n");
@@ -1392,32 +1203,26 @@ public class LongInt {
         System.out.println("Digits B: " + LongIntUtils.digits(b_int));
         System.out.print("\n");
 
+        /* Step 1: LongInt comparisons */
 
-
-         /* Step 1: LongInt comparisons */
-
-
-         for ( int x = 0; x < long_ints.length; x++ )
-            for ( int y = 0; y < long_ints.length; y++ ) {
+        for (int x = 0; x < long_ints.length; x++)
+            for (int y = 0; y < long_ints.length; y++) {
 
                 System.out.println("" + symbol[x] + " and " + symbol[y] + "\n");
-                System.out.print("Are " + symbol[x] + " and " + symbol[y] + " equal? " + long_ints[x].equalTo(long_ints[y]) + "\t");
-                System.out.print("\tIs " + symbol[x] + " less than " + symbol[y] + "? " + long_ints[x].lessThan(long_ints[y]) + "\t");
-                System.out.print("\tIs " + symbol[x] + " greater than " + symbol[y] + "? " + long_ints[x].greaterThan(long_ints[y]));
+                System.out.print("Are " + symbol[x] + " and " + symbol[y] + " equal? "
+                        + long_ints[x].equalTo(long_ints[y]) + "\t");
+                System.out.print("\tIs " + symbol[x] + " less than " + symbol[y] + "? "
+                        + long_ints[x].lessThan(long_ints[y]) + "\t");
+                System.out.print("\tIs " + symbol[x] + " greater than " + symbol[y] + "? "
+                        + long_ints[x].greaterThan(long_ints[y]));
                 System.out.println("\n");
 
             }
 
-
-
-
-
-
         /* Step 2: Additions */
 
-
-        for ( int x = 0; x < long_ints.length; x++ )
-            for ( int y = 0; y < long_ints.length; y++ ) {
+        for (int x = 0; x < long_ints.length; x++)
+            for (int y = 0; y < long_ints.length; y++) {
 
                 System.out.println("" + symbol[x] + " + " + symbol[y] + "\n");
                 long startTime = System.nanoTime();
@@ -1428,14 +1233,11 @@ public class LongInt {
 
             }
 
-
         /* Step 2: Subtractions */
 
+        for (int x = 0; x < long_ints.length; x++)
+            for (int y = 0; y < long_ints.length; y++) {
 
-        for ( int x = 0; x < long_ints.length; x++ )
-            for ( int y = 0; y < long_ints.length; y++ ) {
-
-                
                 System.out.println("" + symbol[x] + " - " + symbol[y] + "\n");
                 long startTime = System.nanoTime();
                 LongInt result = long_ints[x].subtract(long_ints[y]);
@@ -1445,15 +1247,10 @@ public class LongInt {
 
             }
 
-
-
-
-
         /* Step 3: Mutiplications */
 
-
-        for ( int x = 0; x < long_ints.length; x++ )
-            for ( int y = 0; y < long_ints.length; y++ ) {
+        for (int x = 0; x < long_ints.length; x++)
+            for (int y = 0; y < long_ints.length; y++) {
 
                 System.out.println("" + symbol[x] + " * " + symbol[y] + "\n");
                 long startTime = System.nanoTime();
@@ -1464,12 +1261,9 @@ public class LongInt {
 
             }
 
+        /* Step 2: Power */
 
-
-        /* Step 2: Power */ 
-
-      
-        for ( int x = 0; x < long_ints.length; x++){
+        for (int x = 0; x < long_ints.length; x++) {
 
             System.out.println("" + symbol[x] + " ^ " + 5 + "\n");
             long startTime_5 = System.nanoTime();
@@ -1493,12 +1287,8 @@ public class LongInt {
             System.out.println("Running Time: " + duration_20 + " nanoseconds\n");
 
         }
-        
-
-
 
         /* Step 2: Arithmetic Sequnces */
-
 
         System.out.println("J = B + C \n");
         long startTime_j = System.nanoTime();
@@ -1618,8 +1408,5 @@ public class LongInt {
         z.output();
         long duration_z = System.nanoTime() - startTime_z;
         System.out.println("Running Time: " + duration_z + " nanoseconds\n");
-
-
     }
-        
 }

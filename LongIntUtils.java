@@ -1,52 +1,30 @@
-
-// Called using LongIntUtils.method(...)
-
 public class LongIntUtils {
-    
     public static int overflow(int t) {
-
-        /*divide integer by 100000000 to get 9th digit */
-
-        int over = t / 100000000;
-        
-        return over;
+        return t / 100000000;
     }
-    
+
     public static int underflow(int t) {
-
-        int under = t % 100000000;
-
-        return under;
+        return t % 100000000;
     }
-    
+
     public static int upperHalf(int t) {
-        
-        int upper = (t / 10000) % 10000;
-
-        return upper;
+        return (t / 10000) % 10000;
     }
-    
+
     public static int lowerHalf(int t) {
-
-        int lower = t % 10000;
-
-        return lower;
+        return t % 10000;
     }
-    
+
     public static int digits(int t) {
-
         String dig = "" + t;
-        int length = dig.length();
-
-        return length;
+        return dig.length();
     }
-    public static void main(String args[]){
 
-        System.out.println("Overflow: " + LongIntUtils.overflow(123456));
-        System.out.println("Underflow: " + LongIntUtils.underflow(123456));
+    public static void main(String args[]) {
+        System.out.println("Overflow: " + LongIntUtils.overflow(999123456));
+        System.out.println("Underflow: " + LongIntUtils.underflow(999123456));
         System.out.println("Lower Half: " + LongIntUtils.lowerHalf(123456));
         System.out.println("Upper Half: " + LongIntUtils.upperHalf(123456));
         System.out.println("Digits: " + LongIntUtils.digits(123456));
-
     }
 }

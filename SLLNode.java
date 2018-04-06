@@ -1,6 +1,4 @@
-
 public class SLLNode extends Position {
-
     private SLLNode next;
 
     public SLLNode(int value) {
@@ -15,5 +13,3 @@ public class SLLNode extends Position {
         this.next = next;
     }
 }
-
-
