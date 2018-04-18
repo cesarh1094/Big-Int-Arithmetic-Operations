@@ -5,7 +5,7 @@ public class LongInt {
     //private final LongIntList list = new SLLLongIntList();
 
     // USE THIS LINE IN STEP 3
-    private final LongIntList list = new ArrayLongIntList();
+    private final LongIntList<ArrayEntry> list = new ArrayLongIntList();
 
     private boolean isNegative;
 
@@ -20,8 +20,8 @@ public class LongInt {
         isNegative = isNeg;
     }
 
-    private LongInt(LongIntList l, int digitCount) {
-        Position iterator = l.first();
+    private LongInt(LongIntList<ArrayEntry> l, int digitCount) {
+        ArrayEntry iterator = l.first();
 
         while (iterator != null) {
             this.list.insertLast(iterator.getValue());
@@ -47,7 +47,7 @@ public class LongInt {
             return;
         }
 
-        if (digitCount % 8 == 0) {
+        if (this.digitCount % 8 == 0) {
             for (int i = s.length(); i >= 0; i -= 8) {
                 if (i > 8) {
                     this.list.insertLast(Integer.parseInt(s.substring(i - 8, i)));
@@ -71,53 +71,39 @@ public class LongInt {
     }
 
     private void output() {
-
         /* prints LongInt starting from the end of the list */
-
-        Position iterator = this.list.last();
+        ArrayEntry iterator = this.list.last();
 
         if (iterator == null) {
-
             System.out.println("LongInt is empty");
+            return;
+        }
 
-        } else {
+        if (this.isNegative()) {
+            System.out.print("-");
+        }
 
-            if (this.getSign()) {
-
-                System.out.print("-");
-
-            }
-
-            while (iterator != null) {
-
-                if (iterator != this.list.last()) {
-
-                    if (LongIntUtils.digits(iterator.getValue()) < 8) {
-
-                        for (int i = 0; i < 8 - LongIntUtils.digits(iterator.getValue()); i++) {
-
-                            System.out.print(0);
-
-                        }
+        while (iterator != null) {
+            if (iterator != this.list.last()) {
+                if (LongIntUtils.digits(iterator.getValue()) < 8) {
+                    for (int i = 0; i < 8 - LongIntUtils.digits(iterator.getValue()); i++) {
+                        System.out.print(0);
                     }
                 }
-
-                System.out.print(iterator.getValue());
-
-                iterator = this.list.before(iterator);
             }
 
+            System.out.print(iterator.getValue());
+            iterator = this.list.before(iterator);
         }
 
         System.out.println("\n"); // line break
-
     }
 
-    private boolean getSign() {
+    private boolean isNegative() {
         return this.isNegative;
     }
 
-    private void setSign(boolean sign) {
+    private void setToNegative(boolean sign) {
         this.isNegative = sign;
     }
 
@@ -126,12 +112,10 @@ public class LongInt {
     }
 
     private boolean equalTo(LongInt i) {
+        ArrayEntry iteratorThis = this.list.first();
+        ArrayEntry iteratorI = i.list.first();
 
-        Position iterator_this = this.list.first();
-
-        Position iterator_i = i.list.first();
-
-        if (this.isNegative != i.isNegative) {
+        if (this.isNegative() != i.isNegative()) {
             return false;
         }
 
@@ -139,548 +123,222 @@ public class LongInt {
             return false;
         }
 
-        if (iterator_i.getValue() != iterator_this.getValue()) {
+        if (iteratorI.getValue() != iteratorThis.getValue()) {
             return false;
         }
 
-        while (iterator_this != null) {
-            if (iterator_this.getValue() != iterator_i.getValue()) {
+        while (iteratorThis != null) {
+            if (iteratorThis.getValue() != iteratorI.getValue()) {
                 return false;
             }
 
-            iterator_this = this.list.after(iterator_this);
-            iterator_i = i.list.after(iterator_i);
+            iteratorThis = this.list.after(iteratorThis);
+            iteratorI = i.list.after(iteratorI);
         }
 
         return true;
-
     }
 
     private boolean lessThan(LongInt i) {
-
-        Position iterator_this = this.list.last();
-
-        Position iterator_i = i.list.last();
-
-        /* make sure they aren't equal to each other */
-
-        if (this.equalTo(i)) {
-
-            return false;
-
+        if (this.isNegative() != i.isNegative()) {
+            return this.isNegative();
         }
 
-        /* both LongInts are positive */
+        if (this.getDigitCount() != i.getDigitCount()) {
+            return this.isNegative() ? !(this.getDigitCount() < i.getDigitCount()) : !(this.getDigitCount() > i.getDigitCount());
+        }
 
-        if ((this.isNegative == false) && (i.isNegative == false)) {
+        ArrayEntry iteratorThis = this.list.last();
+        ArrayEntry iteratorI = i.list.last();
 
-            if (this.getDigitCount() == i.getDigitCount()) {
-
-                while (iterator_this != null) {
-
-                    if (iterator_this.getValue() > iterator_i.getValue())
-
-                        return false;
-
-                    iterator_this = this.list.before(iterator_this);
-
-                    iterator_i = i.list.before(iterator_i);
-
-                }
-
-                return true;
-
-            } else if (this.getDigitCount() < i.getDigitCount())
-
-                return true;
-
-            else
-
+        while (iteratorThis != null) {
+            if (iteratorThis.getValue() > iteratorI.getValue() && !this.isNegative()) {
                 return false;
+            }
 
-        }
-
-        /* both LongInts are negative */
-
-        if ((this.isNegative == true) && (i.isNegative == true)) {
-
-            if (this.getDigitCount() == i.getDigitCount()) {
-
-                while (iterator_this != null) {
-
-                    if (iterator_this.getValue() < iterator_i.getValue()) {
-
-                        return false;
-
-                    }
-
-                    iterator_this = this.list.before(iterator_this);
-
-                    iterator_i = i.list.before(iterator_i);
-
-                }
-
-                return true;
-
-            } else if (this.getDigitCount() > i.getDigitCount()) {
-
-                return true;
-
-            } else
+            if (iteratorThis.getValue() < iteratorI.getValue() && this.isNegative()) {
                 return false;
+            }
 
+            iteratorThis = this.list.before(iteratorThis);
+            iteratorI = i.list.before(iteratorI);
         }
 
-        /* if the calling LongInt is negative and i is positive */
-
-        if ((this.isNegative == true) && (i.isNegative == false)) {
-
-            return true;
-
-        }
-
-        /* if the calling LongInt is positive and i is negative */
-
-        if ((this.isNegative == true) && (i.isNegative == false)) {
-
-            return false;
-
-        }
-
-        return false;
-
+        return this.list.first() != i.list.first();
     }
 
     private boolean greaterThan(LongInt i) {
-
-        Position iterator_this = this.list.last();
-
-        Position iterator_i = i.list.last();
-
-        /* make sure LongInts aren't equal to each other */
-
-        if (this.equalTo(i)) {
-
-            return false;
-
+        if (this.isNegative() != i.isNegative()) {
+            return !this.isNegative();
         }
 
-        /* both LongInts are positive */
+        if (this.getDigitCount() != i.getDigitCount()) {
+            return this.isNegative() ? this.getDigitCount() < i.getDigitCount() : this.getDigitCount() > i.getDigitCount();
+        }
 
-        if ((this.isNegative == false) && (i.isNegative == false)) {
+        ArrayEntry iteratorThis = this.list.last();
+        ArrayEntry iteratorI = i.list.last();
 
-            if (this.getDigitCount() == i.getDigitCount()) {
-
-                while (iterator_this != null) {
-
-                    if (iterator_this.getValue() < iterator_i.getValue()) {
-
-                        return false;
-
-                    }
-
-                    iterator_this = this.list.before(iterator_this);
-
-                    iterator_i = i.list.before(iterator_i);
-
-                }
-
-                return true;
-
-            } else if (this.getDigitCount() > i.getDigitCount())
-                return true;
-            else
+        while (iteratorThis != null) {
+            if (iteratorThis.getValue() < iteratorI.getValue() && !this.isNegative()) {
                 return false;
+            }
 
-        }
-
-        /* both LongInts are negative */
-
-        if ((this.isNegative == true) && (i.isNegative == true)) {
-
-            if (this.getDigitCount() == i.getDigitCount()) {
-
-                while (iterator_this != null) {
-
-                    if (iterator_this.getValue() > iterator_i.getValue())
-                        return false;
-
-                    iterator_this = this.list.before(iterator_this);
-
-                    iterator_i = i.list.before(iterator_i);
-
-                }
-
-                return true;
-
-            } else if (this.getDigitCount() < i.getDigitCount())
-                return true;
-            else
+            if (iteratorThis.getValue() > iteratorI.getValue() && this.isNegative()) {
                 return false;
+            }
 
+            iteratorThis = this.list.before(iteratorThis);
+            iteratorI = i.list.before(iteratorI);
         }
 
-        /* if the calling LongInt is negative and i is positive */
-
-        if ((this.isNegative == true) && (i.isNegative == false)) {
-
-            return false;
-
-        }
-
-        /* if the calling LongInt is positive and i is negative */
-
-        if ((this.isNegative == false) && (i.isNegative == true)) {
-
-            return true;
-
-        }
-
-        return false;
-
+        return this.list.first() != i.list.first();
     }
 
     private LongInt add(LongInt i) {
-
-        Position iterator_this = this.list.first();
-
-        Position iterator_i = i.list.first();
-
         LongInt solution = null;
+        int nodeSum, overflow = 0;
 
-        int overflow = 0;
-
-        int node_sum = 0;
-
-        if (iterator_this == null) {
-
+        if (this.list.first() == null) {
             solution = new LongInt(i.list, i.getDigitCount());
-            return solution;
 
+            return solution;
         }
 
-        if (iterator_i == null) {
-
+        if (i.list.first() == null) {
             solution = new LongInt(this.list, this.getDigitCount());
-            return solution;
 
+            return solution;
+        }
+
+        if (this.isNegative() != i.isNegative()) {
+            LongInt tmp = this.isNegative() ? new LongInt(this.list, this.getDigitCount()) : new LongInt(i.list, i.getDigitCount());
+            tmp.setToNegative(false);
+            solution = this.isNegative() ? i.subtract(tmp) : this.subtract(tmp);
+
+            return solution;
         }
 
         /* if the two LongInts have the same node length */
+        ArrayEntry iteratorThis = this.list.first();
+        ArrayEntry iteratorI = i.list.first();
+
+        solution = this.isNegative() ? new LongInt(this.isNegative()) : new LongInt();
 
         if (this.list.size() == i.list.size()) {
 
-            if (this.isNegative == i.isNegative) {
+            while (iteratorThis != null) {
+                nodeSum = overflow > 0 ? iteratorThis.getValue() + iteratorI.getValue() + overflow : iteratorThis.getValue() + iteratorI.getValue();
+                solution.list.insertLast(LongIntUtils.underflow(nodeSum));
+                overflow = LongIntUtils.digits(nodeSum) > 8 ? LongIntUtils.overflow(nodeSum) : 0;
 
-                if (this.isNegative == true) {
-
-                    solution = new LongInt(this.isNegative);
-
-                } else
-                    solution = new LongInt();
-
-                while (iterator_this != null) {
-
-                    if (overflow > 0) {
-
-                        node_sum = iterator_this.getValue() + iterator_i.getValue() + overflow;
-
-                        if (LongIntUtils.digits(node_sum) > 8) {
-
-                            solution.list.insertLast(LongIntUtils.underflow(node_sum));
-
-                            overflow = LongIntUtils.overflow(node_sum);
-
-                        } else {
-
-                            solution.list.insertLast(node_sum);
-
-                            overflow = 0;
-
-                        }
-
-                    } else {
-
-                        node_sum = iterator_this.getValue() + iterator_i.getValue();
-
-                        if (LongIntUtils.digits(node_sum) > 8) {
-
-                            solution.list.insertLast(LongIntUtils.underflow(node_sum));
-
-                            overflow = LongIntUtils.overflow(node_sum);
-
-                        } else {
-
-                            solution.list.insertLast(node_sum);
-
-                            overflow = 0;
-
-                        }
-                    }
-
-                    iterator_this = this.list.after(iterator_this);
-
-                    iterator_i = i.list.after(iterator_i);
-
-                }
-
-                if (overflow > 0) {
-
-                    solution.list.insertLast(overflow);
-
-                }
-
-                return solution;
-
+                iteratorThis = this.list.after(iteratorThis);
+                iteratorI = i.list.after(iteratorI);
             }
 
-            if (this.isNegative == false && i.isNegative == true) {
-
-                LongInt temp = new LongInt(i.list, i.digitCount);
-
-                temp.setSign(false);
-
-                solution = this.subtract(temp);
-
-                return solution;
-
+            if (overflow > 0) {
+                solution.list.insertLast(overflow);
             }
 
-            if (this.isNegative == true && i.isNegative == false) {
-
-                LongInt temp = new LongInt(this.list, this.digitCount);
-
-                temp.setSign(false);
-
-                solution = i.subtract(temp);
-
-                return solution;
-
-            }
-
+            return solution;
         }
 
         /* if the calling LongInt has less digits than i */
 
         if (this.list.size() < i.list.size()) {
+            while (iteratorThis != null) {
+                if (overflow > 0) {
+                    nodeSum = iteratorThis.getValue() + iteratorI.getValue() + overflow;
 
-            if (this.isNegative == i.isNegative) {
-
-                if (this.isNegative == true) {
-
-                    solution = new LongInt(this.isNegative);
-
-                } else
-                    solution = new LongInt();
-
-                while (iterator_this != null) {
-
-                    if (overflow > 0) {
-
-                        node_sum = iterator_this.getValue() + iterator_i.getValue() + overflow;
-
-                        if (LongIntUtils.digits(node_sum) > 8) {
-
-                            solution.list.insertLast(LongIntUtils.underflow(node_sum));
-
-                            overflow = LongIntUtils.overflow(node_sum);
-
-                        } else {
-
-                            solution.list.insertLast(node_sum);
-
-                            overflow = 0;
-
-                        }
-
-                    } else if (overflow == 0) {
-
-                        node_sum = iterator_this.getValue() + iterator_i.getValue();
-
-                        if (LongIntUtils.digits(node_sum) > 8) {
-
-                            solution.list.insertLast(LongIntUtils.underflow(node_sum));
-
-                            overflow = LongIntUtils.overflow(node_sum);
-
-                        } else {
-
-                            solution.list.insertLast(node_sum);
-
-                            overflow = 0;
-
-                        }
-                    }
-
-                    iterator_this = this.list.after(iterator_this);
-
-                    iterator_i = i.list.after(iterator_i);
-
-                }
-
-                while (iterator_i != null) {
-
-                    if (overflow > 0) {
-
-                        solution.list.insertLast(iterator_i.getValue() + overflow);
-
-                        overflow = 0;
-
+                    if (LongIntUtils.digits(nodeSum) > 8) {
+                        solution.list.insertLast(LongIntUtils.underflow(nodeSum));
+                        overflow = LongIntUtils.overflow(nodeSum);
                     } else {
-
-                        solution.list.insertLast(iterator_i.getValue());
-
+                        solution.list.insertLast(nodeSum);
+                        overflow = 0;
                     }
+                } else if (overflow == 0) {
+                    nodeSum = iteratorThis.getValue() + iteratorI.getValue();
 
-                    iterator_i = i.list.after(iterator_i);
-
+                    if (LongIntUtils.digits(nodeSum) > 8) {
+                        solution.list.insertLast(LongIntUtils.underflow(nodeSum));
+                        overflow = LongIntUtils.overflow(nodeSum);
+                    } else {
+                        solution.list.insertLast(nodeSum);
+                        overflow = 0;
+                    }
                 }
 
-                return solution;
-
+                iteratorThis = this.list.after(iteratorThis);
+                iteratorI = i.list.after(iteratorI);
             }
 
-            if (this.isNegative == false && i.isNegative == true) {
+            while (iteratorI != null) {
+                if (overflow > 0) {
+                    solution.list.insertLast(iteratorI.getValue() + overflow);
+                    overflow = 0;
+                } else {
+                    solution.list.insertLast(iteratorI.getValue());
+                }
 
-                LongInt temp = new LongInt(i.list, i.digitCount);
-
-                temp.setSign(false);
-
-                solution = this.subtract(temp);
-
-                return solution;
-
+                iteratorI = i.list.after(iteratorI);
             }
 
-            if (this.isNegative == true && i.isNegative == false) {
-
-                LongInt temp = new LongInt(this.list, this.digitCount);
-
-                temp.setSign(false);
-
-                solution = i.subtract(temp);
-
-                return solution;
-
-            }
-
+            return solution;
         }
 
         /* if the calling LongInt has more digits than i */
 
         if (this.list.size() > i.list.size()) {
+            while (iteratorI != null) {
+                if (overflow > 0) {
+                    nodeSum = iteratorThis.getValue() + iteratorI.getValue() + overflow;
 
-            if (this.isNegative == i.isNegative) {
-
-                if (this.isNegative == true) {
-
-                    solution = new LongInt(this.isNegative);
-
-                } else
-                    solution = new LongInt();
-
-                while (iterator_i != null) {
-
-                    if (overflow > 0) {
-
-                        node_sum = iterator_this.getValue() + iterator_i.getValue() + overflow;
-
-                        if (LongIntUtils.digits(node_sum) > 8) {
-
-                            solution.list.insertLast(LongIntUtils.underflow(node_sum));
-
-                            overflow = LongIntUtils.overflow(node_sum);
-
-                        } else {
-
-                            solution.list.insertLast(node_sum);
-
-                            overflow = 0;
-
-                        }
-
-                    } else if (overflow == 0) {
-
-                        node_sum = iterator_this.getValue() + iterator_i.getValue();
-
-                        if (LongIntUtils.digits(node_sum) > 8) {
-
-                            solution.list.insertLast(LongIntUtils.underflow(node_sum));
-
-                            overflow = LongIntUtils.overflow(node_sum);
-
-                        } else {
-
-                            solution.list.insertLast(node_sum);
-
-                            overflow = 0;
-
-                        }
-                    }
-
-                    iterator_this = this.list.after(iterator_this);
-
-                    iterator_i = i.list.after(iterator_i);
-
-                }
-
-                while (iterator_this != null) {
-
-                    if (overflow > 0) {
-
-                        solution.list.insertLast(iterator_this.getValue() + overflow);
-
-                        overflow = 0;
-
+                    if (LongIntUtils.digits(nodeSum) > 8) {
+                        solution.list.insertLast(LongIntUtils.underflow(nodeSum));
+                        overflow = LongIntUtils.overflow(nodeSum);
                     } else {
-
-                        solution.list.insertLast(iterator_this.getValue());
-
+                        solution.list.insertLast(nodeSum);
+                        overflow = 0;
                     }
+                } else if (overflow == 0) {
+                    nodeSum = iteratorThis.getValue() + iteratorI.getValue();
 
-                    iterator_this = this.list.after(iterator_this);
-
+                    if (LongIntUtils.digits(nodeSum) > 8) {
+                        solution.list.insertLast(LongIntUtils.underflow(nodeSum));
+                        overflow = LongIntUtils.overflow(nodeSum);
+                    } else {
+                        solution.list.insertLast(nodeSum);
+                        overflow = 0;
+                    }
                 }
 
-                return solution;
-
+                iteratorThis = this.list.after(iteratorThis);
+                iteratorI = i.list.after(iteratorI);
             }
 
-            if (this.isNegative == false && i.isNegative == true) {
+            while (iteratorThis != null) {
+                if (overflow > 0) {
+                    solution.list.insertLast(iteratorThis.getValue() + overflow);
+                    overflow = 0;
+                } else {
+                    solution.list.insertLast(iteratorThis.getValue());
+                }
 
-                LongInt temp = new LongInt(i.list, i.digitCount);
-
-                temp.setSign(false);
-
-                solution = this.subtract(temp);
-
-                return solution;
-
+                iteratorThis = this.list.after(iteratorThis);
             }
 
-            if (this.isNegative == true && i.isNegative == false) {
-
-                LongInt temp = new LongInt(this.list, this.digitCount);
-
-                temp.setSign(false);
-
-                solution = i.subtract(temp);
-
-                return solution;
-
-            }
-
+            return solution;
         }
 
         return solution;
-
     }
 
     private LongInt subtract(LongInt i) {
 
-        Position iterator_this = this.list.first();
+        ArrayEntry iterator_this = this.list.first();
 
-        Position iterator_i = i.list.first();
+        ArrayEntry iterator_i = i.list.first();
 
         LongInt solution = new LongInt();
 
@@ -881,15 +539,15 @@ public class LongInt {
 
                 LongInt temp_this = new LongInt(this.list, this.digitCount);
 
-                temp_this.setSign(false);
+                temp_this.setToNegative(false);
 
                 LongInt temp_i = new LongInt(i.list, i.digitCount);
 
-                temp_i.setSign(false);
+                temp_i.setToNegative(false);
 
                 solution = temp_i.subtract(temp_this);
 
-                solution.setSign(false);
+                solution.setToNegative(false);
 
                 return solution;
 
@@ -899,15 +557,15 @@ public class LongInt {
 
                 LongInt temp_this = new LongInt(this.list, this.digitCount);
 
-                temp_this.setSign(false);
+                temp_this.setToNegative(false);
 
                 LongInt temp_i = new LongInt(i.list, i.digitCount);
 
-                temp_i.setSign(false);
+                temp_i.setToNegative(false);
 
                 solution = temp_this.subtract(temp_i);
 
-                solution.setSign(true);
+                solution.setToNegative(true);
 
                 return solution;
 
@@ -919,7 +577,7 @@ public class LongInt {
 
             LongInt temp = new LongInt(i.list, i.digitCount);
 
-            temp.setSign(false);
+            temp.setToNegative(false);
 
             solution = this.add(temp);
 
@@ -931,11 +589,11 @@ public class LongInt {
 
             LongInt temp = new LongInt(this.list, this.digitCount);
 
-            temp.setSign(false);
+            temp.setToNegative(false);
 
             solution = i.add(temp);
 
-            solution.setSign(true);
+            solution.setToNegative(true);
 
             return solution;
 
@@ -945,152 +603,147 @@ public class LongInt {
 
     }
 
+    //TODO: Use String implmentation
     private LongInt multiply(LongInt i) {
 
-        Position iterator_this = this.list.first();
-        Position iterator_i = i.list.first();
+        ArrayEntry iteratorThis = this.list.first();
+        ArrayEntry iteratorI = i.list.first();
 
         LongInt result = new LongInt("0");
-        int zeros_this = 0; // # of nodes with padded zeros for this
-        int zeros_i = 0; // # of nodes with padded zeros for i
 
-        while (iterator_this != null) {
+        int zerosThis = 0; // # of nodes with padded zeros for this
+        int zerosI = 0; // # of nodes with padded zeros for i
 
-            while (iterator_i != null) {
-
-                result = new LongInt(
-                        result.add(karatsuba(iterator_this.getValue(), iterator_i.getValue(), zeros_i)).list,
-                        result.add(karatsuba(iterator_this.getValue(), iterator_i.getValue(), zeros_i))
-                                .getDigitCount());
-                zeros_i += 1;
-                iterator_i = i.list.after(iterator_i);
-
+        while (iteratorThis != null) {
+            while (iteratorI != null) {
+                result = result.add(karatsuba(iteratorThis.getValue(), iteratorI.getValue(), zerosI));
+                zerosI += 1;
+                iteratorI = i.list.after(iteratorI);
             }
 
-            iterator_this = this.list.after(iterator_this);
-            iterator_i = i.list.first();
-            zeros_this = zeros_this + 1;
-            zeros_i = zeros_this;
-
+            iteratorThis = this.list.after(iteratorThis);
+            iteratorI = i.list.first();
+            zerosThis += 1;
+            zerosI = zerosThis;
         }
 
         /* if either this or i (not and) result is negative */
 
-        if ((this.isNegative == false && i.isNegative == true) || (this.isNegative == true && i.isNegative == false))
-            result.setSign(true);
+        if (this.isNegative() != i.isNegative())
+            result.setToNegative(true);
         else
-            result.setSign(false);
+            result.setToNegative(false);
 
+        result.calculateDigitCount();
         return result;
-
     }
 
+    private void calculateDigitCount() {
+        ArrayEntry i = this.list.first();
+        int c = 0;
+
+        while (i != null) {
+            int d = LongIntUtils.digits(i.getValue());
+
+            if (d < 8 && i != this.list.last()) {
+                for (int j = 0; j < d; j++) {
+                    c++;
+                }
+            }
+
+            c += d;
+            i = this.list.after(i);
+        }
+
+        this.digitCount = c;
+    }
+
+    //TODO: Function could be refactored by returning a String instead of a LongInt
     private static LongInt karatsuba(int c, int d, int n) {
 
-        /* performs the karatsuba algorithm for muiplying two 8-digit numbers where n is the number nodes with zeros */
+        /* performs the karatsuba algorithm for multiplying two 8-digit numbers where n is the number nodes with zeros */
 
         LongInt result = new LongInt();
 
-        int z1 = LongIntUtils.upperHalf(c) * LongIntUtils.upperHalf(d);
-        int z3 = LongIntUtils.lowerHalf(c) * LongIntUtils.lowerHalf(d);
+        // Upper and low halves of 'c'
+        int cUpperHalf = LongIntUtils.upperHalf(c);
+        int cLowerHalf = LongIntUtils.lowerHalf(c);
 
-        int z2 = ((LongIntUtils.upperHalf(c) + LongIntUtils.lowerHalf(c))
-                * (LongIntUtils.upperHalf(d) + LongIntUtils.lowerHalf(d))) - z1 - z3;
+        // Upper and low halves of 'd'
+        int dUpperHalf = LongIntUtils.upperHalf(d);
+        int dLowerHalf = LongIntUtils.lowerHalf(d);
+
+        int z1 = cUpperHalf * dUpperHalf;
+        int z3 = cLowerHalf * dLowerHalf;
+
+        int z2 = (cUpperHalf + cLowerHalf) * (dUpperHalf + dLowerHalf) - z1 - z3;
+
         int overflow = LongIntUtils.overflow(z2);
 
         int v1 = z1 + LongIntUtils.upperHalf(z2);
         int v2 = (10000 * LongIntUtils.lowerHalf(z2)) + z3;
 
+        for (int i = 0; i < n; i++) {
+            result.list.insertLast(0);
+        }
+
         if (overflow > 0) {
-
-            for (int i = 0; i < n; i++) {
-
-                result.list.insertLast(0);
-
-            }
-
             result.list.insertLast(LongIntUtils.underflow(v2));
             result.list.insertLast(v1 + overflow + overflow * 10000);
-
         } else {
-
-            for (int i = 0; i < n; i++) {
-
-                result.list.insertLast(0);
-
-            }
-
             if (LongIntUtils.overflow(v2) > 0) {
-
                 result.list.insertLast(LongIntUtils.underflow(v2));
                 v1 = v1 + LongIntUtils.overflow(v2);
-
             } else {
-
                 result.list.insertLast(v2);
-
             }
 
             if (v1 > 0) {
-
                 result.list.insertLast(v1);
-
             }
-
         }
 
         return result;
-
     }
 
     private LongInt power(int p) {
-
-        if (p == 0)
+        if (p == 0) {
             return new LongInt("1");
+        }
 
-        if (p == 1)
+        if (p == 1) {
             return this;
+        }
 
         /* if p is even */
-
-        if ((p % 2) == 0)
+        if ((p % 2) == 0) {
             return this.multiply(this).power(p / 2);
+        }
 
         /* if p is odd */
-
         return this.multiply(this.multiply(this).power((p - 1) / 2));
-
     }
 
     private void printEachNode() {
 
         /* print nodes in LongIntList in this format: Node 1: 00000000   Node 2: 00000000 ....... */
-
-        Position node = this.list.first();
-
+        ArrayEntry node = this.list.first();
         int counter = 1;
 
         while (node != null) {
-
             System.out.print("Node " + counter++ + ": ");
 
             if (LongIntUtils.digits(node.getValue()) < 8) {
-
                 for (int i = 0; i < 8 - LongIntUtils.digits(node.getValue()); i++) {
-
                     System.out.print(0);
-
                 }
             }
 
             System.out.print("" + node.getValue() + "\t");
-
             node = this.list.after(node);
-
         }
 
         System.out.println("\n");
-
     }
 
     public static void main(String[] args) {
@@ -1166,14 +819,14 @@ public class LongInt {
         symbol[7] = 'H';
         symbol[8] = 'I';
 
-        /* Step 1: Standard output: Test case output(), test case getDigitCount(), test case getSign(), test case printEachNode() */
+        /* Step 1: Standard output: Test case output(), test case getDigitCount(), test case isNegative(), test case printEachNode() */
 
         for (int x = 0; x < long_ints.length; x++) {
 
             System.out.print("" + symbol[x] + " = ");
             long_ints[x].output();
             System.out.println("" + symbol[x] + " Digit Count: " + long_ints[x].getDigitCount() + "\n");
-            System.out.println("Is '" + symbol[x] + "' negative? " + long_ints[x].getSign() + "\n");
+            System.out.println("Is '" + symbol[x] + "' negative? " + long_ints[x].isNegative() + "\n");
             long_ints[x].printEachNode();
 
         }
@@ -1205,7 +858,7 @@ public class LongInt {
 
         /* Step 1: LongInt comparisons */
 
-        for (int x = 0; x < long_ints.length; x++)
+        for (int x = 0; x < long_ints.length; x++) {
             for (int y = 0; y < long_ints.length; y++) {
 
                 System.out.println("" + symbol[x] + " and " + symbol[y] + "\n");
@@ -1218,9 +871,11 @@ public class LongInt {
                 System.out.println("\n");
 
             }
+        }
 
-        /* Step 2: Additions */
 
+//        /* Step 2: Additions */
+//
         for (int x = 0; x < long_ints.length; x++)
             for (int y = 0; y < long_ints.length; y++) {
 
@@ -1232,181 +887,181 @@ public class LongInt {
                 System.out.println("Run Time: " + duration + " nanoseconds\n");
 
             }
-
-        /* Step 2: Subtractions */
-
-        for (int x = 0; x < long_ints.length; x++)
-            for (int y = 0; y < long_ints.length; y++) {
-
-                System.out.println("" + symbol[x] + " - " + symbol[y] + "\n");
-                long startTime = System.nanoTime();
-                LongInt result = long_ints[x].subtract(long_ints[y]);
-                result.output();
-                long duration = System.nanoTime() - startTime;
-                System.out.println("Running Time: " + duration + " nanoseconds\n");
-
-            }
-
-        /* Step 3: Mutiplications */
-
-        for (int x = 0; x < long_ints.length; x++)
-            for (int y = 0; y < long_ints.length; y++) {
-
-                System.out.println("" + symbol[x] + " * " + symbol[y] + "\n");
-                long startTime = System.nanoTime();
-                LongInt result = long_ints[x].multiply(long_ints[y]);
-                result.output();
-                long duration = System.nanoTime() - startTime;
-                System.out.println("Running Time: " + duration + " nanoseconds\n");
-
-            }
-
-        /* Step 2: Power */
-
-        for (int x = 0; x < long_ints.length; x++) {
-
-            System.out.println("" + symbol[x] + " ^ " + 5 + "\n");
-            long startTime_5 = System.nanoTime();
-            LongInt power_5 = long_ints[x].power(5);
-            power_5.output();
-            long duration_5 = System.nanoTime() - startTime_5;
-            System.out.println("Running Time: " + duration_5 + " nanoseconds\n");
-
-            System.out.println("" + symbol[x] + " ^ " + 10 + "\n");
-            long startTime_10 = System.nanoTime();
-            LongInt power_10 = long_ints[x].power(10);
-            power_10.output();
-            long duration_10 = System.nanoTime() - startTime_10;
-            System.out.println("Running Time: " + duration_10 + " nanoseconds\n");
-
-            System.out.println("" + symbol[x] + " ^ " + 20 + "\n");
-            long startTime_20 = System.nanoTime();
-            LongInt power_20 = long_ints[x].power(20);
-            power_20.output();
-            long duration_20 = System.nanoTime() - startTime_20;
-            System.out.println("Running Time: " + duration_20 + " nanoseconds\n");
-
-        }
-
-        /* Step 2: Arithmetic Sequnces */
-
-        System.out.println("J = B + C \n");
-        long startTime_j = System.nanoTime();
-        LongInt j = b.add(c);
-        j.output();
-        long duration_j = System.nanoTime() - startTime_j;
-        System.out.println("Running Time: " + duration_j + " nanoseconds\n");
-
-        System.out.println("K = C + D \n");
-        long startTime_k = System.nanoTime();
-        LongInt k = c.add(d);
-        k.output();
-        long duration_k = System.nanoTime() - startTime_k;
-        System.out.println("Running Time: " + duration_k + " nanoseconds\n");
-
-        System.out.println("L = I + I \n");
-        long startTime_l = System.nanoTime();
-        LongInt l = i.add(i);
-        l.output();
-        long duration_l = System.nanoTime() - startTime_l;
-        System.out.println("Running Time: " + duration_l + " nanoseconds\n");
-
-        System.out.println("M = A + I \n");
-        long startTime_m = System.nanoTime();
-        LongInt m = a.add(i);
-        m.output();
-        long duration_m = System.nanoTime() - startTime_m;
-        System.out.println("Running Time: " + duration_m + " nanoseconds\n");
-
-        System.out.println("N = B + K \n");
-        long startTime_n = System.nanoTime();
-        LongInt n = b.add(k);
-        n.output();
-        long duration_n = System.nanoTime() - startTime_n;
-        System.out.println("Running Time: " + duration_n + " nanoseconds\n");
-
-        System.out.println("O = A - D \n");
-        long startTime_o = System.nanoTime();
-        LongInt o = a.subtract(d);
-        o.output();
-        long duration_o = System.nanoTime() - startTime_o;
-        System.out.println("Running Time: " + duration_o + " nanoseconds\n");
-
-        System.out.println("P = C - D \n");
-        long startTime_p = System.nanoTime();
-        LongInt p = c.subtract(d);
-        p.output();
-        long duration_p = System.nanoTime() - startTime_p;
-        System.out.println("Running Time: " + duration_p + " nanoseconds\n");
-
-        System.out.println("Q = D - C \n");
-        long startTime_q = System.nanoTime();
-        LongInt q = d.subtract(c);
-        q.output();
-        long duration_q = System.nanoTime() - startTime_q;
-        System.out.println("Running Time: " + duration_q + " nanoseconds\n");
-
-        System.out.println("R = L - L \n");
-        long startTime_r = System.nanoTime();
-        LongInt r = l.subtract(l);
-        r.output();
-        long duration_r = System.nanoTime() - startTime_r;
-        System.out.println("Running Time: " + duration_r + " nanoseconds\n");
-
-        System.out.println("S = P - O \n");
-        long startTime_s = System.nanoTime();
-        LongInt s = p.subtract(o);
-        s.output();
-        long duration_s = System.nanoTime() - startTime_s;
-        System.out.println("Running Time: " + duration_s + " nanoseconds\n");
-
-        System.out.println("T = N - Q \n");
-        long startTime_t = System.nanoTime();
-        LongInt t = n.subtract(q);
-        t.output();
-        long duration_t = System.nanoTime() - startTime_t;
-        System.out.println("Running Time: " + duration_t + " nanoseconds\n");
-
-        System.out.println("U = A * D \n");
-        long startTime_u = System.nanoTime();
-        LongInt u = a.multiply(d);
-        u.output();
-        long duration_u = System.nanoTime() - startTime_u;
-        System.out.println("Running Time: " + duration_u + " nanoseconds\n");
-
-        System.out.println("V = B * C \n");
-        long startTime_v = System.nanoTime();
-        LongInt v = b.multiply(c);
-        v.output();
-        long duration_v = System.nanoTime() - startTime_v;
-        System.out.println("Running Time: " + duration_v + " nanoseconds\n");
-
-        System.out.println("W = D * D \n");
-        long startTime_w = System.nanoTime();
-        LongInt w = d.multiply(d);
-        w.output();
-        long duration_w = System.nanoTime() - startTime_w;
-        System.out.println("Running Time: " + duration_w + " nanoseconds\n");
-
-        System.out.println("X = O * I \n");
-        long startTime_x = System.nanoTime();
-        LongInt x = o.multiply(i);
-        x.output();
-        long duration_x = System.nanoTime() - startTime_x;
-        System.out.println("Running Time: " + duration_x + " nanoseconds\n");
-
-        System.out.println("Y = J * P \n");
-        long startTime_y = System.nanoTime();
-        LongInt y = j.multiply(p);
-        y.output();
-        long duration_y = System.nanoTime() - startTime_y;
-        System.out.println("Running Time: " + duration_y + " nanoseconds\n");
-
-        System.out.println("Z = M * N \n");
-        long startTime_z = System.nanoTime();
-        LongInt z = m.multiply(n);
-        z.output();
-        long duration_z = System.nanoTime() - startTime_z;
-        System.out.println("Running Time: " + duration_z + " nanoseconds\n");
+//
+//        /* Step 2: Subtractions */
+//
+//        for (int x = 0; x < long_ints.length; x++)
+//            for (int y = 0; y < long_ints.length; y++) {
+//
+//                System.out.println("" + symbol[x] + " - " + symbol[y] + "\n");
+//                long startTime = System.nanoTime();
+//                LongInt result = long_ints[x].subtract(long_ints[y]);
+//                result.output();
+//                long duration = System.nanoTime() - startTime;
+//                System.out.println("Running Time: " + duration + " nanoseconds\n");
+//
+//            }
+//
+//        /* Step 3: Mutiplications */
+//
+//        for (int x = 0; x < long_ints.length; x++)
+//            for (int y = 0; y < long_ints.length; y++) {
+//
+//                System.out.println("" + symbol[x] + " * " + symbol[y] + "\n");
+//                long startTime = System.nanoTime();
+//                LongInt result = long_ints[x].multiply(long_ints[y]);
+//                result.output();
+//                long duration = System.nanoTime() - startTime;
+//                System.out.println("Running Time: " + duration + " nanoseconds\n");
+//
+//            }
+//
+//        /* Step 2: Power */
+//
+//        for (int x = 0; x < long_ints.length; x++) {
+//
+//            System.out.println("" + symbol[x] + " ^ " + 5 + "\n");
+//            long startTime_5 = System.nanoTime();
+//            LongInt power_5 = long_ints[x].power(5);
+//            power_5.output();
+//            long duration_5 = System.nanoTime() - startTime_5;
+//            System.out.println("Running Time: " + duration_5 + " nanoseconds\n");
+//
+//            System.out.println("" + symbol[x] + " ^ " + 10 + "\n");
+//            long startTime_10 = System.nanoTime();
+//            LongInt power_10 = long_ints[x].power(10);
+//            power_10.output();
+//            long duration_10 = System.nanoTime() - startTime_10;
+//            System.out.println("Running Time: " + duration_10 + " nanoseconds\n");
+//
+//            System.out.println("" + symbol[x] + " ^ " + 20 + "\n");
+//            long startTime_20 = System.nanoTime();
+//            LongInt power_20 = long_ints[x].power(20);
+//            power_20.output();
+//            long duration_20 = System.nanoTime() - startTime_20;
+//            System.out.println("Running Time: " + duration_20 + " nanoseconds\n");
+//
+//        }
+//
+//        /* Step 2: Arithmetic Sequnces */
+//
+//        System.out.println("J = B + C \n");
+//        long startTime_j = System.nanoTime();
+//        LongInt j = b.add(c);
+//        j.output();
+//        long duration_j = System.nanoTime() - startTime_j;
+//        System.out.println("Running Time: " + duration_j + " nanoseconds\n");
+//
+//        System.out.println("K = C + D \n");
+//        long startTime_k = System.nanoTime();
+//        LongInt k = c.add(d);
+//        k.output();
+//        long duration_k = System.nanoTime() - startTime_k;
+//        System.out.println("Running Time: " + duration_k + " nanoseconds\n");
+//
+//        System.out.println("L = I + I \n");
+//        long startTime_l = System.nanoTime();
+//        LongInt l = i.add(i);
+//        l.output();
+//        long duration_l = System.nanoTime() - startTime_l;
+//        System.out.println("Running Time: " + duration_l + " nanoseconds\n");
+//
+//        System.out.println("M = A + I \n");
+//        long startTime_m = System.nanoTime();
+//        LongInt m = a.add(i);
+//        m.output();
+//        long duration_m = System.nanoTime() - startTime_m;
+//        System.out.println("Running Time: " + duration_m + " nanoseconds\n");
+//
+//        System.out.println("N = B + K \n");
+//        long startTime_n = System.nanoTime();
+//        LongInt n = b.add(k);
+//        n.output();
+//        long duration_n = System.nanoTime() - startTime_n;
+//        System.out.println("Running Time: " + duration_n + " nanoseconds\n");
+//
+//        System.out.println("O = A - D \n");
+//        long startTime_o = System.nanoTime();
+//        LongInt o = a.subtract(d);
+//        o.output();
+//        long duration_o = System.nanoTime() - startTime_o;
+//        System.out.println("Running Time: " + duration_o + " nanoseconds\n");
+//
+//        System.out.println("P = C - D \n");
+//        long startTime_p = System.nanoTime();
+//        LongInt p = c.subtract(d);
+//        p.output();
+//        long duration_p = System.nanoTime() - startTime_p;
+//        System.out.println("Running Time: " + duration_p + " nanoseconds\n");
+//
+//        System.out.println("Q = D - C \n");
+//        long startTime_q = System.nanoTime();
+//        LongInt q = d.subtract(c);
+//        q.output();
+//        long duration_q = System.nanoTime() - startTime_q;
+//        System.out.println("Running Time: " + duration_q + " nanoseconds\n");
+//
+//        System.out.println("R = L - L \n");
+//        long startTime_r = System.nanoTime();
+//        LongInt r = l.subtract(l);
+//        r.output();
+//        long duration_r = System.nanoTime() - startTime_r;
+//        System.out.println("Running Time: " + duration_r + " nanoseconds\n");
+//
+//        System.out.println("S = P - O \n");
+//        long startTime_s = System.nanoTime();
+//        LongInt s = p.subtract(o);
+//        s.output();
+//        long duration_s = System.nanoTime() - startTime_s;
+//        System.out.println("Running Time: " + duration_s + " nanoseconds\n");
+//
+//        System.out.println("T = N - Q \n");
+//        long startTime_t = System.nanoTime();
+//        LongInt t = n.subtract(q);
+//        t.output();
+//        long duration_t = System.nanoTime() - startTime_t;
+//        System.out.println("Running Time: " + duration_t + " nanoseconds\n");
+//
+//        System.out.println("U = A * D \n");
+//        long startTime_u = System.nanoTime();
+//        LongInt u = a.multiply(d);
+//        u.output();
+//        long duration_u = System.nanoTime() - startTime_u;
+//        System.out.println("Running Time: " + duration_u + " nanoseconds\n");
+//
+//        System.out.println("V = B * C \n");
+//        long startTime_v = System.nanoTime();
+//        LongInt v = b.multiply(c);
+//        v.output();
+//        long duration_v = System.nanoTime() - startTime_v;
+//        System.out.println("Running Time: " + duration_v + " nanoseconds\n");
+//
+//        System.out.println("W = D * D \n");
+//        long startTime_w = System.nanoTime();
+//        LongInt w = d.multiply(d);
+//        w.output();
+//        long duration_w = System.nanoTime() - startTime_w;
+//        System.out.println("Running Time: " + duration_w + " nanoseconds\n");
+//
+//        System.out.println("X = O * I \n");
+//        long startTime_x = System.nanoTime();
+//        LongInt x = o.multiply(i);
+//        x.output();
+//        long duration_x = System.nanoTime() - startTime_x;
+//        System.out.println("Running Time: " + duration_x + " nanoseconds\n");
+//
+//        System.out.println("Y = J * P \n");
+//        long startTime_y = System.nanoTime();
+//        LongInt y = j.multiply(p);
+//        y.output();
+//        long duration_y = System.nanoTime() - startTime_y;
+//        System.out.println("Running Time: " + duration_y + " nanoseconds\n");
+//
+//        System.out.println("Z = M * N \n");
+//        long startTime_z = System.nanoTime();
+//        LongInt z = m.multiply(n);
+//        z.output();
+//        long duration_z = System.nanoTime() - startTime_z;
+//        System.out.println("Running Time: " + duration_z + " nanoseconds\n");
     }
 }
