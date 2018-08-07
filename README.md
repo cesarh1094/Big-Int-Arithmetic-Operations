@@ -3,9 +3,9 @@ Arithmetic Operations on Long Integers
 ###Table of Contents
 - [Background Information](#background-information)
 - [Comparison Operators](#comparison-operators)
-   - [equalTo()](#equalto)
-   - [lessThan()](#lessthan)
-   - [greaterThan()](#greaterthan)
+   - [equalTo()](#`equalto(-longint-i-)`)
+   - [lessThan()](#`lessthan(-longint-i-)`)
+   - [greaterThan()](#`greaterthan(-longint-i)`)
 - Arithmetic Operators
    - add
    - subtract
@@ -29,7 +29,7 @@ LongInt a = new LongInt( "1238729332432432497" );
 ```
 
 #### Comparison Operators
-##### equalTo
+##### `equalTo( LongInt i )`
 Sample usage:
 ```java
 LongInt a = new LongInt( "2222" );
@@ -39,7 +39,7 @@ System.out.println( a.equalTo( b ) ); // prints false
 System.out.println( a.equalTo( a ) ); // prints true
 ```
 
-##### lessThan
+##### `lessThan( LongInt i )`
 Sample usage:
 ```java
 LongInt a = new LongInt( "2222" );
@@ -50,7 +50,7 @@ System.out.println( a.lessThan( a ) ); // prints false
 System.out.println( b.lessThan( a ) ); // prints false
 ```
 
-##### greaterThan
+##### `greaterThan( LongInt i)`
 Sample usage:
 ```java
 LongInt a = new LongInt( "2222" );
