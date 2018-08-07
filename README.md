@@ -3,9 +3,9 @@ Arithmetic Operations on Long Integers
 ###Table of Contents
 - [Background Information](#background-information)
 - [Comparison Operators](#comparison-operators)
-   - [equalTo()](#`equalto(-longint-i-)`)
-   - [lessThan()](#`lessthan(-longint-i-)`)
-   - [greaterThan()](#`greaterthan(-longint-i)`)
+   - [equalTo()](#equalto-longint-i-)
+   - [lessThan()](#lessthan-longint-i-)
+   - [greaterThan()](#greaterthan-longint-i)
 - Arithmetic Operators
    - add
    - subtract
