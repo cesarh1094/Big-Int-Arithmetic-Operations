@@ -15,8 +15,7 @@ Arithmetic Operations on Long Integers
 #### Background Information
 Problem: `int` primitive data type has it's limitations. According to the Java spec:
 
-``int: By default, the int data type is a 32-bit signed two's complement integer, which has a minimum value of -2^(31) and a maximum value of 2^(31-1). In Java SE 8 and later, you can use the int data type to represent an unsigned 32-bit integer, which has a minimum value of 0 and a maximum value of 232-1. Use the Integer class to use int data type as an unsigned integer.
-``
+> By default, the int data type is a `32-bit` signed two's complement integer, which has a minimum value of -2<sup>31</sup> and a maximum value of 2<sup>(31-1)</sup>. In Java SE 8 and later, you can use the int data type to represent an unsigned `32-bit` integer, which has a minimum value of 0 and a maximum value of 2<sup>(32-1)</sup>. Use the Integer class to use int data type as an unsigned integer.
 
 Solution: implement LongInt using ```array ( [] )``` primitive data type. Each LongInt has a `list` that is an array of integers where each value at every index can have **at most** 8 digits of a parsed ``String`` passed into the constructor
 For example:
