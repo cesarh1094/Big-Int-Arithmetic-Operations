@@ -1,11 +1,6 @@
 public class LongInt {
 
-    // DO NOT CHANGE OR REMOVE THIS LINE (UNTIL STEP 3)
-    // This will give a warning about raw types, but you can ignore it for this project
-//    private final LongIntList list = new SLLLongIntList();
-
-    // USE THIS LINE IN STEP 3
-    private final LongIntList<ArrayEntry> list = new ArrayLongIntList();
+    private final ArrayLongIntList list = new ArrayLongIntList();
 
     private boolean isNegative;
 
@@ -52,7 +47,7 @@ public class LongInt {
      *
      * @param s String
      */
-    private LongInt( String s ) {
+    public LongInt( String s ) {
 
         this.isNegative = ( '-' == s.charAt( 0 ) );
 
@@ -72,9 +67,6 @@ public class LongInt {
         }
     }
 
-    /**
-     * Prints LongInt starting from the end of the list
-     */
     private void printLongInt() {
         ArrayEntry iterator = this.list.last();
 
@@ -124,7 +116,7 @@ public class LongInt {
      *
      * @return int
      */
-    private int getDigitCount() {
+    public int getDigitCount() {
         return this.digitCount;
     }
 
@@ -134,7 +126,7 @@ public class LongInt {
      * @param i LongInt
      * @return boolean
      */
-    private boolean equalTo( LongInt i ) {
+    public boolean equalTo( LongInt i ) {
         // Compare signs
         if ( this.isNegative() != i.isNegative() ) {
             return false;
@@ -170,7 +162,7 @@ public class LongInt {
      * @param i LongInt
      * @return boolean
      */
-    private boolean lessThan( LongInt i ) {
+    public boolean lessThan( LongInt i ) {
         // Compare signs
         if ( this.isNegative() != i.isNegative() ) {
             return this.isNegative();
@@ -207,7 +199,7 @@ public class LongInt {
      * @param i LongInt
      * @return boolean
      */
-    private boolean greaterThan( LongInt i ) {
+    public boolean greaterThan( LongInt i ) {
         // Compare signs
         if ( this.isNegative() != i.isNegative() ) {
             return !this.isNegative();
@@ -244,48 +236,46 @@ public class LongInt {
      * @param i LongInt
      * @return solution LongInt
      */
-    private LongInt add( LongInt i ) {
+    public LongInt add( LongInt i ) {
+
+        // Operations on empty list just returns
+        if ( null == this.list.first() ) {
+            return new LongInt( i.list, i.getDigitCount() );
+        }
+
+        // Operations on empty list just returns
+        if ( null == i.list.first() ) {
+            return new LongInt( this.list, this.getDigitCount() );
+        }
+
+        // Perform subtraction if 'this' or 'i' is negative
+        if ( this.isNegative() != i.isNegative() ) {
+            LongInt tmp = this.isNegative() ? new LongInt( this.list, this.getDigitCount() ) : new LongInt( i.list, i.getDigitCount() );
+
+            return this.isNegative() ? i.subtract( tmp ) : this.subtract( tmp );
+        }
+
         LongInt solution;
-
-        // Operations on empty list just returns
-        if ( this.list.first() == null ) {
-            solution = new LongInt( i.list, i.getDigitCount() );
-
-            return solution;
-        }
-
-        // Operations on empty list just returns
-        if ( i.list.first() == null ) {
-            solution = new LongInt( this.list, this.getDigitCount() );
-
-            return solution;
-        }
 
         int nodeSum, overflow = 0;
 
-        // Perform subtraction if either LongInts are negative
-        if ( this.isNegative() != i.isNegative() ) {
-            LongInt tmp = this.isNegative() ? new LongInt( this.list, this.getDigitCount() ) : new LongInt( i.list, i.getDigitCount() );
-            solution = this.isNegative() ? i.subtract( tmp ) : this.subtract( tmp );
-
-            return solution;
-        }
-
-        // Set outer and inner iterators based on size of their lists
-        ArrayEntry inner = ( this.list.size() <= i.list.size() ) ? this.list.first() : i.list.first();
-        ArrayEntry outer = ( this.list.size() <= i.list.size() ) ? i.list.first() : this.list.first();
+        ArrayLongIntList innerList = ( this.list.size() <= i.list.size() ) ? this.list : i.list;
+        ArrayLongIntList outerList = ( this.list.size() <= i.list.size() ) ? i.list : this.list;
 
         solution = this.isNegative() ? new LongInt( this.isNegative() ) : new LongInt();
 
-        while ( inner != null ) {
-            nodeSum = overflow > 0 ? inner.getValue() + outer.getValue() + overflow : inner.getValue() + outer.getValue();
+        ArrayEntry outerListNode = outerList.first();
+        ArrayEntry innerListNode = innerList.first();
+
+        while ( null != innerListNode ) {
+            nodeSum = ( overflow > 0 ) ? innerListNode.getValue() + outerListNode.getValue() + overflow : innerListNode.getValue() + outerListNode.getValue();
 
             overflow = LongIntUtils.digits( nodeSum ) > 8 ? LongIntUtils.overflow( nodeSum ) : 0;
 
             solution.list.insertLast( LongIntUtils.underflow( nodeSum ) );
 
-            inner = ( this.list.size() <= i.list.size() ) ? this.list.after( inner ) : i.list.after( inner );
-            outer = ( this.list.size() <= i.list.size() ) ? i.list.after( outer ) : this.list.after( outer );
+            innerListNode = innerList.after( innerListNode );
+            outerListNode = outerList.after( outerListNode );
         }
 
         if ( this.list.size() == i.list.size() && overflow > 0 ) {
@@ -295,9 +285,9 @@ public class LongInt {
         }
 
         // Append the rest of the outer iterator
-        while ( outer != null ) {
+        while ( null != outerListNode ) {
             boolean hasOverflow = ( overflow > 0 );
-            int outerVale = hasOverflow ? outer.getValue() + overflow : outer.getValue();
+            int outerVale = hasOverflow ? outerListNode.getValue() + overflow : outerListNode.getValue();
 
             solution.list.insertLast( outerVale );
 
@@ -305,14 +295,7 @@ public class LongInt {
                 overflow = 0;
             }
 
-//            if ( overflow > 0 ) {
-//                solution.list.insertLast( outer.getValue() + overflow );
-//                overflow = 0;
-//            } else {
-//                solution.list.insertLast( outer.getValue() );
-//            }
-
-            outer = i.list.after( outer );
+            outerListNode = outerList.after( outerListNode );
         }
 
         return solution;
@@ -324,15 +307,9 @@ public class LongInt {
      * @param i LongInt
      * @return solution
      */
-    private LongInt subtract( LongInt i ) {
-
-        ArrayEntry iterator_this = this.list.first();
-        ArrayEntry iterator_i = i.list.first();
+    public LongInt subtract( LongInt i ) {
 
         LongInt solution = new LongInt();
-        boolean carry = false;
-
-        int nodeDiff = 0;
 
         // Perform addition if either LongInts are negative
         if ( this.isNegative() != i.isNegative() ) {
@@ -346,17 +323,35 @@ public class LongInt {
             return solution;
         }
 
-        if ( this.isNegative == false && i.isNegative == false ) {
+        if ( this.equalTo( i ) ) {
+            return new LongInt( "0" );
+        }
 
-            if ( this.equalTo( i ) ) {
+        if ( this.isNegative() ) {
+            LongInt temp_this = new LongInt( this.list, this.getDigitCount() );
+            LongInt temp_i = new LongInt( i.list, i.getDigitCount() );
 
-                solution = new LongInt();
+            solution = ( this.greaterThan( i ) ) ? temp_i.subtract( temp_this ) : temp_this.subtract( temp_i );
 
-                solution.list.insertLast( 0 );
-
-                return solution;
-
+            if ( this.greaterThan( i ) ) {
+                solution.setToNegative( false );
             }
+
+            if ( this.lessThan( i ) ) {
+                solution.setToNegative( true );
+            }
+
+            return solution;
+        }
+
+
+        ArrayEntry iterator_this = this.list.first();
+        ArrayEntry iterator_i = i.list.first();
+
+        int nodeDiff;
+        boolean carry = false;
+
+        if ( !this.isNegative() && !i.isNegative() ) {
 
             if ( this.lessThan( i ) ) {
 
@@ -365,78 +360,53 @@ public class LongInt {
                 while ( iterator_this != null ) {
 
                     if ( carry ) {
-
                         if ( ( iterator_i.getValue() < iterator_this.getValue() ) && ( i.list.after( iterator_i ) != null ) ) {
-
-                            carry = true;
-
                             nodeDiff = ( ( 100000000 + iterator_i.getValue() ) - 1 ) - iterator_this.getValue();
 
                             solution.list.insertLast( nodeDiff );
-
                         } else {
-
                             carry = false;
-
                             nodeDiff = ( iterator_i.getValue() - 1 ) - iterator_this.getValue();
 
                             solution.list.insertLast( nodeDiff );
-
                         }
                     } else {
-
                         if ( ( iterator_i.getValue() < iterator_this.getValue() ) && ( i.list.after( iterator_i ) != null ) ) {
-
                             carry = true;
-
                             nodeDiff = ( 100000000 + iterator_i.getValue() ) - iterator_this.getValue();
 
                             solution.list.insertLast( nodeDiff );
-
                         } else {
-
-                            carry = false;
-
                             nodeDiff = iterator_i.getValue() - iterator_this.getValue();
 
-                            if ( ( ( i.list.isLast( iterator_i ) == false ) && ( nodeDiff > 0 ) ) ) {
+                            if ( !i.list.isLast( iterator_i ) && ( nodeDiff > 0 ) ) {
 
                                 solution.list.insertLast( nodeDiff );
 
-                            } else if ( this.list.size() == i.list.size() && nodeDiff != 0 )
-
+                            } else if ( this.list.size() == i.list.size() && nodeDiff != 0 ) {
                                 solution.list.insertLast( nodeDiff );
-
+                            }
                         }
-
                     }
 
                     iterator_this = this.list.after( iterator_this );
-
                     iterator_i = i.list.after( iterator_i );
-
                 }
 
                 while ( iterator_i != null ) {
 
                     if ( carry ) {
-
                         solution.list.insertLast( iterator_i.getValue() - 1 );
 
                         carry = false;
-
                     } else {
-
                         solution.list.insertLast( iterator_i.getValue() );
-
                     }
 
                     iterator_i = i.list.after( iterator_i );
-
                 }
 
                 return solution;
-
             }
 
             if ( this.greaterThan( i ) ) {
@@ -444,17 +414,13 @@ public class LongInt {
                 solution = new LongInt();
 
                 while ( iterator_i != null ) {
-
                     if ( carry ) {
 
                         if ( ( iterator_this.getValue() < iterator_i.getValue() ) && ( this.list.after( iterator_this ) != null ) ) {
 
-                            carry = true;
-
                             nodeDiff = ( ( 100000000 + iterator_this.getValue() ) - 1 ) - iterator_i.getValue();
 
                             solution.list.insertLast( nodeDiff );
-
                         } else {
 
                             carry = false;
@@ -462,10 +428,8 @@ public class LongInt {
                             nodeDiff = ( iterator_this.getValue() - 1 ) - iterator_i.getValue();
 
                             solution.list.insertLast( nodeDiff );
-
                         }
                     } else {
-
                         if ( ( iterator_this.getValue() < iterator_i.getValue() ) && ( this.list.after( iterator_this ) != null ) ) {
 
                             carry = true;
@@ -473,28 +437,21 @@ public class LongInt {
                             nodeDiff = ( 100000000 + iterator_this.getValue() ) - iterator_i.getValue();
 
                             solution.list.insertLast( nodeDiff );
-
                         } else {
-
-                            carry = false;
 
                             nodeDiff = iterator_this.getValue() - iterator_i.getValue();
 
-                            if ( ( this.list.isLast( iterator_this ) == false ) && ( nodeDiff > 0 ) ) {
-
+                            if ( !this.list.isLast( iterator_this ) && ( nodeDiff > 0 ) ) {
                                 solution.list.insertLast( nodeDiff );
-                            } else if ( this.list.size() == i.list.size() && nodeDiff != 0 )
-
+                            } else if ( this.list.size() == i.list.size() && nodeDiff != 0 ) {
                                 solution.list.insertLast( nodeDiff );
+                            }
 
                         }
-
                     }
 
                     iterator_this = this.list.after( iterator_this );
-
                     iterator_i = i.list.after( iterator_i );
-
                 }
 
                 while ( iterator_this != null ) {
@@ -504,72 +461,17 @@ public class LongInt {
                         solution.list.insertLast( iterator_this.getValue() - 1 );
 
                         carry = false;
-
                     } else {
-
                         solution.list.insertLast( iterator_this.getValue() );
-
                     }
 
                     iterator_this = this.list.after( iterator_this );
-
                 }
 
                 return solution;
-
             }
-
         }
 
-        if ( this.isNegative == true && i.isNegative == true ) {
-
-            if ( this.equalTo( i ) ) {
-
-                solution = new LongInt();
-
-                solution.list.insertLast( 0 );
-
-                return solution;
-
-            }
-
-            if ( this.greaterThan( i ) ) {
-
-                LongInt temp_this = new LongInt( this.list, this.digitCount );
-
-                temp_this.setToNegative( false );
-
-                LongInt temp_i = new LongInt( i.list, i.digitCount );
-
-                temp_i.setToNegative( false );
-
-                solution = temp_i.subtract( temp_this );
-
-                solution.setToNegative( false );
-
-                return solution;
-
-            }
-
-            if ( this.lessThan( i ) ) {
-
-                LongInt temp_this = new LongInt( this.list, this.digitCount );
-
-                temp_this.setToNegative( false );
-
-                LongInt temp_i = new LongInt( i.list, i.digitCount );
-
-                temp_i.setToNegative( false );
-
-                solution = temp_this.subtract( temp_i );
-
-                solution.setToNegative( true );
-
-                return solution;
-
-            }
-
-        }
 
         return solution;
     }
@@ -578,7 +480,7 @@ public class LongInt {
      * @param i LongInt
      * @return LongInt
      */
-    private LongInt multiply( LongInt i ) {
+    public LongInt multiply( LongInt i ) {
         ArrayEntry iteratorThis = this.list.first();
         ArrayEntry iteratorI = i.list.first();
 
@@ -688,7 +590,7 @@ public class LongInt {
      * @param p int
      * @return LongInt
      */
-    private LongInt power( int p ) {
+    public LongInt power( int p ) {
         if ( p == 0 ) {
             return new LongInt( "1" );
         }
@@ -726,324 +628,5 @@ public class LongInt {
         }
 
         System.out.println( "\n" );
-    }
-
-    public static void main( String[] args ) {
-
-        /* initialization of all Test Cases */
-
-        long startTime_a = System.nanoTime();
-        LongInt a = new LongInt( "2222" );
-        long duration_a = System.nanoTime() - startTime_a;
-        System.out.println( "Initialization of A - Running Time: " + duration_a + " nanoseconds\n" );
-
-        long startTime_b = System.nanoTime();
-        LongInt b = new LongInt( "99999999" );
-        long duration_b = System.nanoTime() - startTime_b;
-        System.out.println( "Initialization of B - Running Time: " + duration_b + " nanoseconds\n" );
-
-        long startTime_c = System.nanoTime();
-        LongInt c = new LongInt( "-246813575732" );
-        long duration_c = System.nanoTime() - startTime_c;
-        System.out.println( "Initialization of C - Running Time: " + duration_c + " nanoseconds\n" );
-
-        long startTime_d = System.nanoTime();
-        LongInt d = new LongInt( "180270361023456789" );
-        long duration_d = System.nanoTime() - startTime_d;
-        System.out.println( "Initialization of D - Running Time: " + duration_d + " nanoseconds\n" );
-
-        long startTime_e = System.nanoTime();
-        LongInt e = new LongInt( "1423550000000010056810000054593452907711568359" );
-        long duration_e = System.nanoTime() - startTime_e;
-        System.out.println( "Initialization of E - Running Time: " + duration_e + " nanoseconds\n" );
-
-        long startTime_f = System.nanoTime();
-        LongInt f = new LongInt( "-350003274594847454317890" );
-        long duration_f = System.nanoTime() - startTime_f;
-        System.out.println( "Initialization of F - Running Time: " + duration_f + " nanoseconds\n" );
-
-        long startTime_g = System.nanoTime();
-        LongInt g = new LongInt(
-                "29302390234702973402973420937420973420937420937234872349872934872893472893749287423847" );
-        long duration_g = System.nanoTime() - startTime_g;
-        System.out.println( "Initialization of G - Running Time: " + duration_g + " nanoseconds\n" );
-
-        long startTime_h = System.nanoTime();
-        LongInt h = new LongInt( "-98534342983742987342987339234098230498203894209928374662342342342356723423423" );
-        long duration_h = System.nanoTime() - startTime_h;
-        System.out.println( "Initialization of H - Running Time: " + duration_h + " nanoseconds\n" );
-
-        long startTime_i = System.nanoTime();
-        LongInt i = new LongInt(
-                "8436413168438618351351684694835434894364351846843435168484351684684315384684313846813153843135138413513843813513813138438435153454154515151513141592654543515316848613242587561516511233246174561276521672162416274123076527612" );
-        long duration_i = System.nanoTime() - startTime_i;
-        System.out.println( "Initialization of I - Running Time: " + duration_i + " nanoseconds\n" );
-
-        LongInt[] long_ints = new LongInt[9];
-        long_ints[0] = a;
-        long_ints[1] = b;
-        long_ints[2] = c;
-        long_ints[3] = d;
-        long_ints[4] = e;
-        long_ints[5] = f;
-        long_ints[6] = g;
-        long_ints[7] = h;
-        long_ints[8] = i;
-
-        char[] symbol = new char[9];
-        symbol[0] = 'A';
-        symbol[1] = 'B';
-        symbol[2] = 'C';
-        symbol[3] = 'D';
-        symbol[4] = 'E';
-        symbol[5] = 'F';
-        symbol[6] = 'G';
-        symbol[7] = 'H';
-        symbol[8] = 'I';
-
-        /* Step 1: Standard printLongInt: Test case printLongInt(), test case getDigitCount(), test case isNegative(), test case printEachNode() */
-
-        for ( int x = 0; x < long_ints.length; x++ ) {
-
-            System.out.print( "" + symbol[x] + " = " );
-            long_ints[x].printLongInt();
-            System.out.println( "" + symbol[x] + " Digit Count: " + long_ints[x].getDigitCount() + "\n" );
-            System.out.println( "Is '" + symbol[x] + "' negative? " + long_ints[x].isNegative() + "\n" );
-            long_ints[x].printEachNode();
-
-        }
-
-        /* Steo 1: LongInUtils test cases */
-
-        int a_int = 2222;
-        int b_int = 99999999;
-
-        System.out.println( "Overflow A: " + LongIntUtils.overflow( a_int ) );
-        System.out.println( "Overflow B: " + LongIntUtils.overflow( b_int ) );
-        System.out.print( "\n" );
-
-        System.out.println( "Underflow A: " + LongIntUtils.underflow( a_int ) );
-        System.out.println( "Underflow B: " + LongIntUtils.underflow( b_int ) );
-        System.out.print( "\n" );
-
-        System.out.println( "Upperhalf A: " + LongIntUtils.upperHalf( a_int ) );
-        System.out.println( "Lowerhalf A: " + LongIntUtils.lowerHalf( a_int ) );
-        System.out.print( "\n" );
-
-        System.out.println( "Upperhalf B: " + LongIntUtils.upperHalf( b_int ) );
-        System.out.println( "Lowerhalf B: " + LongIntUtils.lowerHalf( b_int ) );
-        System.out.print( "\n" );
-
-        System.out.println( "Digits A: " + LongIntUtils.digits( a_int ) );
-        System.out.println( "Digits B: " + LongIntUtils.digits( b_int ) );
-        System.out.print( "\n" );
-
-        /* Step 1: LongInt comparisons */
-
-        for ( int x = 0; x < long_ints.length; x++ ) {
-            for ( int y = 0; y < long_ints.length; y++ ) {
-
-                System.out.println( "" + symbol[x] + " and " + symbol[y] + "\n" );
-                System.out.print( "Are " + symbol[x] + " and " + symbol[y] + " equal? "
-                        + long_ints[x].equalTo( long_ints[y] ) + "\t" );
-                System.out.print( "\tIs " + symbol[x] + " less than " + symbol[y] + "? "
-                        + long_ints[x].lessThan( long_ints[y] ) + "\t" );
-                System.out.print( "\tIs " + symbol[x] + " greater than " + symbol[y] + "? "
-                        + long_ints[x].greaterThan( long_ints[y] ) );
-                System.out.println( "\n" );
-
-            }
-        }
-
-
-//        /* Step 2: Additions */
-//
-//        for (int x = 0; x < long_ints.length; x++)
-//            for (int y = 0; y < long_ints.length; y++) {
-//
-//                System.out.println("" + symbol[x] + " + " + symbol[y] + "\n");
-//                long startTime = System.nanoTime();
-//                LongInt result = long_ints[x].add(long_ints[y]);
-//                result.printLongInt();
-//                long duration = System.nanoTime() - startTime;
-//                System.out.println("Run Time: " + duration + " nanoseconds\n");
-//
-//            }
-
-        /* Step 2: Subtractions */
-
-        for ( int x = 0; x < long_ints.length; x++ )
-            for ( int y = 0; y < long_ints.length; y++ ) {
-
-                System.out.println( "" + symbol[x] + " - " + symbol[y] + "\n" );
-                long startTime = System.nanoTime();
-                LongInt result = long_ints[x].subtract( long_ints[y] );
-                result.printLongInt();
-                long duration = System.nanoTime() - startTime;
-                System.out.println( "Running Time: " + duration + " nanoseconds\n" );
-
-            }
-
-//        /* Step 3: Mutiplications */
-//
-//        for (int x = 0; x < long_ints.length; x++)
-//            for (int y = 0; y < long_ints.length; y++) {
-//
-//                System.out.println("" + symbol[x] + " * " + symbol[y] + "\n");
-//                long startTime = System.nanoTime();
-//                LongInt result = long_ints[x].multiply(long_ints[y]);
-//                result.printLongInt();
-//                long duration = System.nanoTime() - startTime;
-//                System.out.println("Running Time: " + duration + " nanoseconds\n");
-//
-//            }
-//
-//        /* Step 2: Power */
-//
-//        for (int x = 0; x < long_ints.length; x++) {
-//
-//            System.out.println("" + symbol[x] + " ^ " + 5 + "\n");
-//            long startTime_5 = System.nanoTime();
-//            LongInt power_5 = long_ints[x].power(5);
-//            power_5.printLongInt();
-//            long duration_5 = System.nanoTime() - startTime_5;
-//            System.out.println("Running Time: " + duration_5 + " nanoseconds\n");
-//
-//            System.out.println("" + symbol[x] + " ^ " + 10 + "\n");
-//            long startTime_10 = System.nanoTime();
-//            LongInt power_10 = long_ints[x].power(10);
-//            power_10.printLongInt();
-//            long duration_10 = System.nanoTime() - startTime_10;
-//            System.out.println("Running Time: " + duration_10 + " nanoseconds\n");
-//
-//            System.out.println("" + symbol[x] + " ^ " + 20 + "\n");
-//            long startTime_20 = System.nanoTime();
-//            LongInt power_20 = long_ints[x].power(20);
-//            power_20.printLongInt();
-//            long duration_20 = System.nanoTime() - startTime_20;
-//            System.out.println("Running Time: " + duration_20 + " nanoseconds\n");
-//
-//        }
-//
-//        /* Step 2: Arithmetic Sequnces */
-//
-//        System.out.println("J = B + C \n");
-//        long startTime_j = System.nanoTime();
-//        LongInt j = b.add(c);
-//        j.printLongInt();
-//        long duration_j = System.nanoTime() - startTime_j;
-//        System.out.println("Running Time: " + duration_j + " nanoseconds\n");
-//
-//        System.out.println("K = C + D \n");
-//        long startTime_k = System.nanoTime();
-//        LongInt k = c.add(d);
-//        k.printLongInt();
-//        long duration_k = System.nanoTime() - startTime_k;
-//        System.out.println("Running Time: " + duration_k + " nanoseconds\n");
-//
-//        System.out.println("L = I + I \n");
-//        long startTime_l = System.nanoTime();
-//        LongInt l = i.add(i);
-//        l.printLongInt();
-//        long duration_l = System.nanoTime() - startTime_l;
-//        System.out.println("Running Time: " + duration_l + " nanoseconds\n");
-//
-//        System.out.println("M = A + I \n");
-//        long startTime_m = System.nanoTime();
-//        LongInt m = a.add(i);
-//        m.printLongInt();
-//        long duration_m = System.nanoTime() - startTime_m;
-//        System.out.println("Running Time: " + duration_m + " nanoseconds\n");
-//
-//        System.out.println("N = B + K \n");
-//        long startTime_n = System.nanoTime();
-//        LongInt n = b.add(k);
-//        n.printLongInt();
-//        long duration_n = System.nanoTime() - startTime_n;
-//        System.out.println("Running Time: " + duration_n + " nanoseconds\n");
-//
-//        System.out.println("O = A - D \n");
-//        long startTime_o = System.nanoTime();
-//        LongInt o = a.subtract(d);
-//        o.printLongInt();
-//        long duration_o = System.nanoTime() - startTime_o;
-//        System.out.println("Running Time: " + duration_o + " nanoseconds\n");
-//
-//        System.out.println("P = C - D \n");
-//        long startTime_p = System.nanoTime();
-//        LongInt p = c.subtract(d);
-//        p.printLongInt();
-//        long duration_p = System.nanoTime() - startTime_p;
-//        System.out.println("Running Time: " + duration_p + " nanoseconds\n");
-//
-//        System.out.println("Q = D - C \n");
-//        long startTime_q = System.nanoTime();
-//        LongInt q = d.subtract(c);
-//        q.printLongInt();
-//        long duration_q = System.nanoTime() - startTime_q;
-//        System.out.println("Running Time: " + duration_q + " nanoseconds\n");
-//
-//        System.out.println("R = L - L \n");
-//        long startTime_r = System.nanoTime();
-//        LongInt r = l.subtract(l);
-//        r.printLongInt();
-//        long duration_r = System.nanoTime() - startTime_r;
-//        System.out.println("Running Time: " + duration_r + " nanoseconds\n");
-//
-//        System.out.println("S = P - O \n");
-//        long startTime_s = System.nanoTime();
-//        LongInt s = p.subtract(o);
-//        s.printLongInt();
-//        long duration_s = System.nanoTime() - startTime_s;
-//        System.out.println("Running Time: " + duration_s + " nanoseconds\n");
-//
-//        System.out.println("T = N - Q \n");
-//        long startTime_t = System.nanoTime();
-//        LongInt t = n.subtract(q);
-//        t.printLongInt();
-//        long duration_t = System.nanoTime() - startTime_t;
-//        System.out.println("Running Time: " + duration_t + " nanoseconds\n");
-//
-//        System.out.println("U = A * D \n");
-//        long startTime_u = System.nanoTime();
-//        LongInt u = a.multiply(d);
-//        u.printLongInt();
-//        long duration_u = System.nanoTime() - startTime_u;
-//        System.out.println("Running Time: " + duration_u + " nanoseconds\n");
-//
-//        System.out.println("V = B * C \n");
-//        long startTime_v = System.nanoTime();
-//        LongInt v = b.multiply(c);
-//        v.printLongInt();
-//        long duration_v = System.nanoTime() - startTime_v;
-//        System.out.println("Running Time: " + duration_v + " nanoseconds\n");
-//
-//        System.out.println("W = D * D \n");
-//        long startTime_w = System.nanoTime();
-//        LongInt w = d.multiply(d);
-//        w.printLongInt();
-//        long duration_w = System.nanoTime() - startTime_w;
-//        System.out.println("Running Time: " + duration_w + " nanoseconds\n");
-//
-//        System.out.println("X = O * I \n");
-//        long startTime_x = System.nanoTime();
-//        LongInt x = o.multiply(i);
-//        x.printLongInt();
-//        long duration_x = System.nanoTime() - startTime_x;
-//        System.out.println("Running Time: " + duration_x + " nanoseconds\n");
-//
-//        System.out.println("Y = J * P \n");
-//        long startTime_y = System.nanoTime();
-//        LongInt y = j.multiply(p);
-//        y.printLongInt();
-//        long duration_y = System.nanoTime() - startTime_y;
-//        System.out.println("Running Time: " + duration_y + " nanoseconds\n");
-//
-//        System.out.println("Z = M * N \n");
-//        long startTime_z = System.nanoTime();
-//        LongInt z = m.multiply(n);
-//        z.printLongInt();
-//        long duration_z = System.nanoTime() - startTime_z;
-//        System.out.println("Running Time: " + duration_z + " nanoseconds\n");
     }
 }
