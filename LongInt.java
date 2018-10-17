@@ -28,7 +28,6 @@ public class LongInt {
         }
     }
 
-
     /**
      * Default constructor
      */
