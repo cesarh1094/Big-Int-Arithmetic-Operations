@@ -1,10 +1,32 @@
 public class LongInt {
 
     private final ArrayLongIntList list = new ArrayLongIntList();
-
     private boolean isNegative;
-
     private int digitCount;
+
+    /**
+     * Main constructor for creating a LongInt by passing in a String of digits
+     *
+     * @param s String
+     */
+    public LongInt( String s ) {
+        this.isNegative = ( '-' == s.charAt( 0 ) );
+        s = this.isNegative ? s.substring( 1 ) : s;
+
+        this.digitCount = s.length();
+
+        if ( this.digitCount < 8 ) {
+            this.list.insertFirst( Integer.parseInt( s ) );
+
+            return;
+        }
+
+        for ( int i = s.length(); i > 0; i -= 8 ) {
+            String node = ( i >= 8 ) ? s.substring( i - 8, i ) : s.substring( 0, i );
+
+            this.list.insertLast( Integer.parseInt( node ) );
+        }
+    }
 
     /**
      * Default constructor
@@ -40,31 +62,6 @@ public class LongInt {
 
         this.digitCount = digitCount;
         this.isNegative = false;
-    }
-
-    /**
-     * Main constructor for creating a LongInt by passing in a String of digits
-     *
-     * @param s An integer stored in a string
-     */
-    public LongInt( String s ) {
-
-        this.isNegative = ( '-' == s.charAt( 0 ) );
-
-        s = this.isNegative ? s.substring( 1 ) : s;
-        this.digitCount = s.length();
-
-        if ( this.digitCount < 8 ) {
-            this.list.insertFirst( Integer.parseInt( s ) );
-
-            return;
-        }
-
-        for ( int i = s.length(); i > 0; i -= 8 ) {
-            String node = ( i >= 8 ) ? s.substring( i - 8, i ) : s.substring( 0, i );
-
-            this.list.insertLast( Integer.parseInt( node ) );
-        }
     }
 
     public LongInt duplicate( LongInt i ) {
@@ -371,121 +368,116 @@ public class LongInt {
         int nodeDiff;
         boolean carry = false;
 
-        if ( !this.isNegative() && !i.isNegative() ) {
 
-            if ( this.lessThan( i ) ) {
+        if ( this.lessThan( i ) ) {
 
-                solution = new LongInt( true );
+            solution = new LongInt( true );
 
-                while ( iterator_this != null ) {
+            while ( iterator_this != null ) {
 
-                    if ( carry ) {
-                        if ( ( iterator_i.getValue() < iterator_this.getValue() ) && ( i.list.after( iterator_i ) != null ) ) {
-                            nodeDiff = ( ( 100000000 + iterator_i.getValue() ) - 1 ) - iterator_this.getValue();
+                if ( carry ) {
+                    if ( ( iterator_i.getValue() < iterator_this.getValue() ) && ( i.list.after( iterator_i ) != null ) ) {
+                        nodeDiff = ( ( 100000000 + iterator_i.getValue() ) - 1 ) - iterator_this.getValue();
 
-                            solution.list.insertLast( nodeDiff );
-                        } else {
-                            carry = false;
-                            nodeDiff = ( iterator_i.getValue() - 1 ) - iterator_this.getValue();
-
-                            solution.list.insertLast( nodeDiff );
-                        }
+                        solution.list.insertLast( nodeDiff );
                     } else {
-                        if ( ( iterator_i.getValue() < iterator_this.getValue() ) && ( i.list.after( iterator_i ) != null ) ) {
-                            carry = true;
-                            nodeDiff = ( 100000000 + iterator_i.getValue() ) - iterator_this.getValue();
-
-                            solution.list.insertLast( nodeDiff );
-                        } else {
-                            nodeDiff = iterator_i.getValue() - iterator_this.getValue();
-
-                            if ( !i.list.isLast( iterator_i ) && ( nodeDiff > 0 ) ) {
-
-                                solution.list.insertLast( nodeDiff );
-
-                            } else if ( this.list.size() == i.list.size() && nodeDiff != 0 ) {
-                                solution.list.insertLast( nodeDiff );
-                            }
-                        }
-                    }
-
-                    iterator_this = this.list.after( iterator_this );
-                    iterator_i = i.list.after( iterator_i );
-                }
-
-                while ( iterator_i != null ) {
-
-                    if ( carry ) {
-                        solution.list.insertLast( iterator_i.getValue() - 1 );
-
                         carry = false;
-                    } else {
-                        solution.list.insertLast( iterator_i.getValue() );
-                    }
+                        nodeDiff = ( iterator_i.getValue() - 1 ) - iterator_this.getValue();
 
-                    iterator_i = i.list.after( iterator_i );
+                        solution.list.insertLast( nodeDiff );
+                    }
+                } else {
+                    if ( ( iterator_i.getValue() < iterator_this.getValue() ) && ( i.list.after( iterator_i ) != null ) ) {
+                        carry = true;
+                        nodeDiff = ( 100000000 + iterator_i.getValue() ) - iterator_this.getValue();
+
+                        solution.list.insertLast( nodeDiff );
+                    } else {
+                        nodeDiff = iterator_i.getValue() - iterator_this.getValue();
+
+                        if ( !i.list.isLast( iterator_i ) && ( nodeDiff > 0 ) ) {
+
+                            solution.list.insertLast( nodeDiff );
+
+                        } else if ( this.list.size() == i.list.size() && nodeDiff != 0 ) {
+                            solution.list.insertLast( nodeDiff );
+                        }
+                    }
                 }
+
+                iterator_this = this.list.after( iterator_this );
+                iterator_i = i.list.after( iterator_i );
             }
 
-            if ( this.greaterThan( i ) ) {
+            while ( iterator_i != null ) {
 
-                solution = new LongInt();
+                if ( carry ) {
+                    solution.list.insertLast( iterator_i.getValue() - 1 );
 
-                while ( iterator_i != null ) {
-                    if ( carry ) {
-
-                        if ( ( iterator_this.getValue() < iterator_i.getValue() ) && ( this.list.after( iterator_this ) != null ) ) {
-
-                            nodeDiff = ( ( 100000000 + iterator_this.getValue() ) - 1 ) - iterator_i.getValue();
-
-                            solution.list.insertLast( nodeDiff );
-                        } else {
-
-                            carry = false;
-
-                            nodeDiff = ( iterator_this.getValue() - 1 ) - iterator_i.getValue();
-
-                            solution.list.insertLast( nodeDiff );
-                        }
-                    } else {
-                        if ( ( iterator_this.getValue() < iterator_i.getValue() ) && ( this.list.after( iterator_this ) != null ) ) {
-
-                            carry = true;
-
-                            nodeDiff = ( 100000000 + iterator_this.getValue() ) - iterator_i.getValue();
-
-                            solution.list.insertLast( nodeDiff );
-                        } else {
-
-                            nodeDiff = iterator_this.getValue() - iterator_i.getValue();
-
-                            if ( !this.list.isLast( iterator_this ) && ( nodeDiff > 0 ) ) {
-                                solution.list.insertLast( nodeDiff );
-                            } else if ( this.list.size() == i.list.size() && nodeDiff != 0 ) {
-                                solution.list.insertLast( nodeDiff );
-                            }
-
-                        }
-                    }
-
-                    iterator_this = this.list.after( iterator_this );
-                    iterator_i = i.list.after( iterator_i );
+                    carry = false;
+                } else {
+                    solution.list.insertLast( iterator_i.getValue() );
                 }
 
-                while ( iterator_this != null ) {
+                iterator_i = i.list.after( iterator_i );
+            }
+        }
 
-                    if ( carry ) {
+        if ( this.greaterThan( i ) ) {
 
-                        solution.list.insertLast( iterator_this.getValue() - 1 );
+            solution = new LongInt();
+
+            while ( iterator_i != null ) {
+                if ( carry ) {
+
+                    if ( ( iterator_this.getValue() < iterator_i.getValue() ) && ( this.list.after( iterator_this ) != null ) ) {
+
+                        nodeDiff = ( ( 100000000 + iterator_this.getValue() ) - 1 ) - iterator_i.getValue();
+
+                        solution.list.insertLast( nodeDiff );
+                    } else {
 
                         carry = false;
-                    } else {
-                        solution.list.insertLast( iterator_this.getValue() );
-                    }
 
-                    iterator_this = this.list.after( iterator_this );
+                        nodeDiff = ( iterator_this.getValue() - 1 ) - iterator_i.getValue();
+
+                        solution.list.insertLast( nodeDiff );
+                    }
+                } else {
+                    if ( ( iterator_this.getValue() < iterator_i.getValue() ) && ( this.list.after( iterator_this ) != null ) ) {
+
+                        carry = true;
+
+                        nodeDiff = ( 100000000 + iterator_this.getValue() ) - iterator_i.getValue();
+
+                        solution.list.insertLast( nodeDiff );
+                    } else {
+
+                        nodeDiff = iterator_this.getValue() - iterator_i.getValue();
+
+                        if ( !this.list.isLast( iterator_this ) && ( nodeDiff > 0 ) ) {
+                            solution.list.insertLast( nodeDiff );
+                        } else if ( this.list.size() == i.list.size() && nodeDiff != 0 ) {
+                            solution.list.insertLast( nodeDiff );
+                        }
+                    }
                 }
 
+                iterator_this = this.list.after( iterator_this );
+                iterator_i = i.list.after( iterator_i );
+            }
+
+            while ( iterator_this != null ) {
+                if ( carry ) {
+
+                    solution.list.insertLast( iterator_this.getValue() - 1 );
+
+                    carry = false;
+                } else {
+                    solution.list.insertLast( iterator_this.getValue() );
+                }
+
+                iterator_this = this.list.after( iterator_this );
             }
         }
 
