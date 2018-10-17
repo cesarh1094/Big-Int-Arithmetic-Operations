@@ -348,7 +348,7 @@ public class LongInt {
             LongInt temp_this = new LongInt( this.list, this.getDigitCount() );
             LongInt temp_i = new LongInt( i.list, i.getDigitCount() );
 
-            solution = ( this.greaterThan( i ) ) ? temp_this.subtract( temp_i ) : temp_i.subtract( temp_this );
+            solution = ( this.greaterThan( i ) ) ? temp_i.subtract( temp_this ) : temp_this.subtract( temp_i );
 
             if ( this.greaterThan( i ) ) {
                 solution.setToNegative( false );
@@ -394,7 +394,7 @@ public class LongInt {
                 } else {
                     nodeDiff = outerNode.getValue() - innerNode.getValue();
 
-                    if ( !outerList.isLast( outerNode ) && ( nodeDiff > 0 ) ) {
+                    if ( !innerList.isLast( innerNode ) && ( nodeDiff > 0 ) ) {
 
                         solution.list.insertLast( nodeDiff );
 
@@ -410,21 +410,13 @@ public class LongInt {
 
         while ( outerNode != null ) {
 
-            int nodeValue = carry ? outerNode.getValue() - 1 : outerNode.getValue();
-
             if ( carry ) {
+                solution.list.insertLast( outerNode.getValue() - 1 );
+
                 carry = false;
+            } else {
+                solution.list.insertLast( outerNode.getValue() );
             }
-
-//            if ( carry ) {
-//                solution.list.insertLast( outerNode.getValue() - 1 );
-//
-//                carry = false;
-//            } else {
-//                solution.list.insertLast( outerNode.getValue() );
-//            }
-
-            solution.list.insertLast( nodeValue );
 
             outerNode = outerList.after( outerNode );
         }
