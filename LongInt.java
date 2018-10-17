@@ -27,8 +27,8 @@ public class LongInt {
     /**
      * Constructor for 'deep' cloning of a LongInt
      *
-     * @param l          LongIntList<ArrayEntry>
-     * @param digitCount int
+     * @param l          The list of nodes that are to be iterated ane duplicated
+     * @param digitCount The number of digits of the LongInt that's being duplicated
      */
     private LongInt( LongIntList<ArrayEntry> l, int digitCount ) {
         ArrayEntry iterator = l.first();
@@ -45,7 +45,7 @@ public class LongInt {
     /**
      * Main constructor for creating a LongInt by passing in a String of digits
      *
-     * @param s String
+     * @param s An integer stored in a string
      */
     public LongInt( String s ) {
 
@@ -67,30 +67,45 @@ public class LongInt {
         }
     }
 
-    private void printLongInt() {
-        ArrayEntry iterator = this.list.last();
+    public LongInt duplicate( LongInt i ) {
 
-        if ( iterator == null ) {
-            System.out.println( "LongInt is empty" );
-            return;
+        String duplicate = i.stringify();
+
+        return new LongInt( duplicate );
+    }
+
+    public String stringify() {
+
+        if ( 0 == this.list.size() ) {
+            return "0";
         }
 
-        if ( this.isNegative() ) {
-            System.out.print( "-" );
-        }
+        String longIntString = this.isNegative() ? "-" : "";
 
-        while ( iterator != null ) {
-            if ( ( iterator != this.list.last() ) && ( LongIntUtils.digits( iterator.getValue() ) < 8 ) ) {
-                for ( int i = 0; i < 8 - LongIntUtils.digits( iterator.getValue() ); i++ ) {
-                    System.out.print( 0 );
+        ArrayLongIntList list = this.list;
+        ArrayEntry node = list.last();
+
+
+        while ( null != node ) {
+            int nodeValue = node.getValue();
+
+            if ( ( this.list.size() - 1 ) != node.getIndex() ) {
+                int numberOfZeros = 8 - LongIntUtils.digits( nodeValue );
+
+                for ( int i = 0; i < numberOfZeros; i++ ) {
+                    longIntString += "0";
                 }
             }
 
-            System.out.print( iterator.getValue() );
-            iterator = this.list.before( iterator );
+            longIntString += "" + node.getValue();
+            node = list.before( node );
         }
 
-        System.out.println( "\n" ); // line break
+        return longIntString;
+    }
+
+    public void print() {
+        System.out.println( this.stringify() );
     }
 
     /**
@@ -98,7 +113,7 @@ public class LongInt {
      *
      * @return boolean
      */
-    private boolean isNegative() {
+    public boolean isNegative() {
         return this.isNegative;
     }
 
@@ -127,6 +142,7 @@ public class LongInt {
      * @return boolean
      */
     public boolean equalTo( LongInt i ) {
+
         // Compare signs
         if ( this.isNegative() != i.isNegative() ) {
             return false;
@@ -163,6 +179,7 @@ public class LongInt {
      * @return boolean
      */
     public boolean lessThan( LongInt i ) {
+
         // Compare signs
         if ( this.isNegative() != i.isNegative() ) {
             return this.isNegative();
@@ -200,6 +217,7 @@ public class LongInt {
      * @return boolean
      */
     public boolean greaterThan( LongInt i ) {
+
         // Compare signs
         if ( this.isNegative() != i.isNegative() ) {
             return !this.isNegative();
@@ -287,9 +305,9 @@ public class LongInt {
         // Append the rest of the outer iterator
         while ( null != outerListNode ) {
             boolean hasOverflow = ( overflow > 0 );
-            int outerVale = hasOverflow ? outerListNode.getValue() + overflow : outerListNode.getValue();
+            int outerValue = hasOverflow ? outerListNode.getValue() + overflow : outerListNode.getValue();
 
-            solution.list.insertLast( outerVale );
+            solution.list.insertLast( outerValue );
 
             if ( hasOverflow ) {
                 overflow = 0;
@@ -297,6 +315,8 @@ public class LongInt {
 
             outerListNode = outerList.after( outerListNode );
         }
+
+        solution.recalculateDigitCount();
 
         return solution;
     }
@@ -405,8 +425,6 @@ public class LongInt {
 
                     iterator_i = i.list.after( iterator_i );
                 }
-
-                return solution;
             }
 
             if ( this.greaterThan( i ) ) {
@@ -468,42 +486,50 @@ public class LongInt {
                     iterator_this = this.list.after( iterator_this );
                 }
 
-                return solution;
             }
         }
 
+        solution.recalculateDigitCount();
 
         return solution;
     }
 
     /**
-     * @param i LongInt
-     * @return LongInt
+     * Perform multiplication utilizing the karatsuba method and additions
+     *
+     * @param i The LongInt that is to be multiplied to calling LongInt
+     * @return The product of two LongInts
      */
     public LongInt multiply( LongInt i ) {
-        ArrayEntry iteratorThis = this.list.first();
-        ArrayEntry iteratorI = i.list.first();
 
         LongInt result = new LongInt( "0" );
-
-        if ( this.isNegative() != i.isNegative() ) {
-            result.setToNegative( true );
-        }
 
         int zerosThis = 0; // # of nodes with padded zeros for this
         int zerosI = 0; // # of nodes with padded zeros for i
 
-        while ( iteratorThis != null ) {
-            while ( iteratorI != null ) {
-                result = result.add( karatsuba( iteratorThis.getValue(), iteratorI.getValue(), zerosI ) );
+        boolean isThisGreaterThanI = this.greaterThan( i );
+
+        ArrayLongIntList outerList = isThisGreaterThanI ? this.list : i.list;
+        ArrayLongIntList innerList = isThisGreaterThanI ? i.list : this.list;
+
+        ArrayEntry outerNode = outerList.first();
+        ArrayEntry innerNode = innerList.first();
+
+        while ( outerNode != null ) {
+            while ( innerNode != null ) {
+                result = result.add( karatsuba( outerNode.getValue(), innerNode.getValue(), zerosI ) );
                 zerosI += 1;
-                iteratorI = i.list.after( iteratorI );
+                innerNode = innerList.after( innerNode );
             }
 
-            iteratorThis = this.list.after( iteratorThis );
-            iteratorI = i.list.first();
+            outerNode = outerList.after( outerNode );
+            innerNode = innerList.first();
             zerosThis += 1;
             zerosI = zerosThis;
+        }
+
+        if ( this.isNegative() != i.isNegative() ) {
+            result.setToNegative( true );
         }
 
         result.recalculateDigitCount();
@@ -541,7 +567,7 @@ public class LongInt {
      * @return LongInt
      */
     private static LongInt karatsuba( int c, int d, int n ) {
-        LongInt result = new LongInt();
+        LongInt result = new LongInt( false );
 
         // Upper and low halves of 'c'
         int cUpperHalf = LongIntUtils.upperHalf( c );
@@ -610,7 +636,7 @@ public class LongInt {
      * Prints each node of the LongInt
      * ex: Node 1: 00000000   Node 2: 00000000 .......
      */
-    private void printEachNode() {
+    public void printNodes() {
         ArrayEntry node = this.list.first();
         int counter = 1;
 
