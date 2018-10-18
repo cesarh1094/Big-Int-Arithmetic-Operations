@@ -10,18 +10,21 @@ public class LongInt {
      * @param s String
      */
     public LongInt( String s ) {
+
         this.isNegative = ( '-' == s.charAt( 0 ) );
         s = this.isNegative ? s.substring( 1 ) : s;
 
         this.digitCount = s.length();
 
         if ( this.digitCount < 8 ) {
+
             this.list.insertFirst( Integer.parseInt( s ) );
 
             return;
         }
 
         for ( int i = s.length(); i > 0; i -= 8 ) {
+
             String node = ( i >= 8 ) ? s.substring( i - 8, i ) : s.substring( 0, i );
 
             this.list.insertLast( Integer.parseInt( node ) );
@@ -56,6 +59,7 @@ public class LongInt {
         ArrayEntry iterator = l.first();
 
         while ( iterator != null ) {
+
             this.list.insertLast( iterator.getValue() );
             iterator = l.after( iterator );
         }
@@ -84,9 +88,11 @@ public class LongInt {
 
 
         while ( null != node ) {
+
             int nodeValue = node.getValue();
 
             if ( ( this.list.size() - 1 ) != node.getIndex() ) {
+
                 int numberOfZeros = 8 - LongIntUtils.digits( nodeValue );
 
                 for ( int i = 0; i < numberOfZeros; i++ ) {
@@ -158,6 +164,7 @@ public class LongInt {
         }
 
         while ( iteratorThis != null ) {
+
             if ( iteratorThis.getValue() != iteratorI.getValue() ) {
                 return false;
             }
@@ -192,6 +199,7 @@ public class LongInt {
 
         // Do a deep comparison of all the nodes in their respective list[]
         while ( iteratorThis != null ) {
+
             if ( iteratorThis.getValue() > iteratorI.getValue() && !this.isNegative() ) {
                 return false;
             }
@@ -230,6 +238,7 @@ public class LongInt {
 
         // Do a deep comparison of all the nodes in their respective list[]
         while ( iteratorThis != null ) {
+
             if ( iteratorThis.getValue() < iteratorI.getValue() && !this.isNegative() ) {
                 return false;
             }
@@ -457,6 +466,7 @@ public class LongInt {
         ArrayEntry innerNode = innerList.first();
 
         while ( outerNode != null ) {
+
             while ( innerNode != null ) {
                 result = result.add( karatsuba( outerNode.getValue(), innerNode.getValue(), zerosI ) );
                 zerosI += 1;
@@ -486,6 +496,7 @@ public class LongInt {
         int c = 0;
 
         while ( i != null ) {
+
             int d = LongIntUtils.digits( i.getValue() );
 
             if ( d < 8 && i != this.list.last() ) {
@@ -509,6 +520,7 @@ public class LongInt {
      * @return LongInt
      */
     private static LongInt karatsuba( int c, int d, int n ) {
+
         LongInt result = new LongInt( false );
 
         // Upper and low halves of 'c'
@@ -534,9 +546,11 @@ public class LongInt {
         }
 
         if ( overflow > 0 ) {
+
             result.list.insertLast( LongIntUtils.underflow( v2 ) );
             result.list.insertLast( v1 + overflow + overflow * 10000 );
         } else {
+
             if ( LongIntUtils.overflow( v2 ) > 0 ) {
                 result.list.insertLast( LongIntUtils.underflow( v2 ) );
                 v1 = v1 + LongIntUtils.overflow( v2 );
@@ -559,6 +573,7 @@ public class LongInt {
      * @return LongInt
      */
     public LongInt power( int p ) {
+
         if ( p == 0 ) {
             return new LongInt( "1" );
         }
@@ -579,10 +594,12 @@ public class LongInt {
      * ex: Node 1: 00000000   Node 2: 00000000 .......
      */
     public void printNodes() {
+
         ArrayEntry node = this.list.first();
         int counter = 1;
 
         while ( node != null ) {
+
             System.out.print( "Node " + counter++ + ": " );
 
             if ( LongIntUtils.digits( node.getValue() ) < 8 ) {
