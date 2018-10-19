@@ -32,8 +32,7 @@ public class TestLongInt {
         System.out.println( "Initialization of F - Running Time: " + duration_f + " nanoseconds\n" );
 
         long startTime_g = System.nanoTime();
-        LongInt g = new LongInt(
-                "29302390234702973402973420937420973420937420937234872349872934872893472893749287423847" );
+        LongInt g = new LongInt( "29302390234702973402973420937420973420937420937234872349872934872893472893749287423847" );
         long duration_g = System.nanoTime() - startTime_g;
         System.out.println( "Initialization of G - Running Time: " + duration_g + " nanoseconds\n" );
 
@@ -48,41 +47,41 @@ public class TestLongInt {
         long duration_i = System.nanoTime() - startTime_i;
         System.out.println( "Initialization of I - Running Time: " + duration_i + " nanoseconds\n" );
 
-        LongInt[] long_ints = new LongInt[9];
-        long_ints[0] = a;
-        long_ints[1] = b;
-        long_ints[2] = c;
-        long_ints[3] = d;
-        long_ints[4] = e;
-        long_ints[5] = f;
-        long_ints[6] = g;
-        long_ints[7] = h;
-        long_ints[8] = i;
+        LongInt[] long_ints = new LongInt[ 9 ];
+        long_ints[ 0 ] = a;
+        long_ints[ 1 ] = b;
+        long_ints[ 2 ] = c;
+        long_ints[ 3 ] = d;
+        long_ints[ 4 ] = e;
+        long_ints[ 5 ] = f;
+        long_ints[ 6 ] = g;
+        long_ints[ 7 ] = h;
+        long_ints[ 8 ] = i;
 
-        char[] symbol = new char[9];
-        symbol[0] = 'A';
-        symbol[1] = 'B';
-        symbol[2] = 'C';
-        symbol[3] = 'D';
-        symbol[4] = 'E';
-        symbol[5] = 'F';
-        symbol[6] = 'G';
-        symbol[7] = 'H';
-        symbol[8] = 'I';
+        char[] symbol = new char[ 9 ];
+        symbol[ 0 ] = 'A';
+        symbol[ 1 ] = 'B';
+        symbol[ 2 ] = 'C';
+        symbol[ 3 ] = 'D';
+        symbol[ 4 ] = 'E';
+        symbol[ 5 ] = 'F';
+        symbol[ 6 ] = 'G';
+        symbol[ 7 ] = 'H';
+        symbol[ 8 ] = 'I';
 
         /* Step 1: Standard printLongInt: Test case printLongInt(), test case getDigitCount(), test case isNegative(), test case printEachNode() */
 
         for ( int x = 0; x < long_ints.length; x++ ) {
 
-            System.out.print( "" + symbol[x] + " = " );
-            long_ints[x].print();
-            System.out.println( "" + symbol[x] + " Digit Count: " + long_ints[x].getDigitCount() + "\n" );
-            System.out.println( "Is '" + symbol[x] + "' negative? " + long_ints[x].isNegative() + "\n" );
-            long_ints[x].printNodes();
+            System.out.print( "" + symbol[ x ] + " = " );
+            long_ints[ x ].print();
+            System.out.println( "" + symbol[ x ] + " Digit Count: " + long_ints[ x ].getDigitCount() + "\n" );
+            System.out.println( "Is '" + symbol[ x ] + "' negative? " + long_ints[ x ].isNegative() + "\n" );
+            long_ints[ x ].printNodes();
 
         }
 
-        System.out.println(e.stringify());
+        System.out.println( e.stringify() );
 
         /* Step 1: LongInUtils test cases */
 
@@ -114,13 +113,13 @@ public class TestLongInt {
         for ( int x = 0; x < long_ints.length; x++ ) {
             for ( int y = 0; y < long_ints.length; y++ ) {
 
-                System.out.println( "" + symbol[x] + " and " + symbol[y] + "\n" );
-                System.out.print( "Are " + symbol[x] + " and " + symbol[y] + " equal? "
-                        + long_ints[x].equalTo( long_ints[y] ) + "\t" );
-                System.out.print( "\tIs " + symbol[x] + " less than " + symbol[y] + "? "
-                        + long_ints[x].lessThan( long_ints[y] ) + "\t" );
-                System.out.print( "\tIs " + symbol[x] + " greater than " + symbol[y] + "? "
-                        + long_ints[x].greaterThan( long_ints[y] ) );
+                System.out.println( "" + symbol[ x ] + " and " + symbol[ y ] + "\n" );
+                System.out.print( "Are " + symbol[ x ] + " and " + symbol[ y ] + " equal? "
+                        + long_ints[ x ].equalTo( long_ints[ y ] ) + "\t" );
+                System.out.print( "\tIs " + symbol[ x ] + " less than " + symbol[ y ] + "? "
+                        + long_ints[ x ].lessThan( long_ints[ y ] ) + "\t" );
+                System.out.print( "\tIs " + symbol[ x ] + " greater than " + symbol[ y ] + "? "
+                        + long_ints[ x ].greaterThan( long_ints[ y ] ) );
                 System.out.println( "\n" );
 
             }
@@ -132,9 +131,9 @@ public class TestLongInt {
         for ( int x = 0; x < long_ints.length; x++ ) {
             for ( int y = 0; y < long_ints.length; y++ ) {
 
-                System.out.println( "" + symbol[x] + " + " + symbol[y] + "\n" );
+                System.out.println( "" + symbol[ x ] + " + " + symbol[ y ] + "\n" );
                 long startTime = System.nanoTime();
-                LongInt result = long_ints[x].add( long_ints[y] );
+                LongInt result = long_ints[ x ].add( long_ints[ y ] );
                 result.print();
                 long duration = System.nanoTime() - startTime;
                 System.out.println( "Run Time: " + duration + " nanoseconds\n" );
@@ -147,9 +146,9 @@ public class TestLongInt {
         for ( int x = 0; x < long_ints.length; x++ ) {
             for ( int y = 0; y < long_ints.length; y++ ) {
 
-                System.out.println( "" + symbol[x] + " - " + symbol[y] + "\n" );
+                System.out.println( "" + symbol[ x ] + " - " + symbol[ y ] + "\n" );
                 long startTime = System.nanoTime();
-                LongInt result = long_ints[x].subtract( long_ints[y] );
+                LongInt result = long_ints[ x ].subtract( long_ints[ y ] );
                 result.print();
                 long duration = System.nanoTime() - startTime;
                 System.out.println( "Running Time: " + duration + " nanoseconds\n" );
@@ -159,164 +158,164 @@ public class TestLongInt {
 
         /* Step 3: Mutiplications */
 
-        for (int x = 0; x < long_ints.length; x++)
-            for (int y = 0; y < long_ints.length; y++) {
+        for ( int x = 0; x < long_ints.length; x++ )
+            for ( int y = 0; y < long_ints.length; y++ ) {
 
-                System.out.println("" + symbol[x] + " * " + symbol[y] + "\n");
+                System.out.println( "" + symbol[ x ] + " * " + symbol[ y ] + "\n" );
                 long startTime = System.nanoTime();
-                LongInt result = long_ints[x].multiply(long_ints[y]);
+                LongInt result = long_ints[ x ].multiply( long_ints[ y ] );
                 result.print();
                 long duration = System.nanoTime() - startTime;
-                System.out.println("Running Time: " + duration + " nanoseconds\n");
+                System.out.println( "Running Time: " + duration + " nanoseconds\n" );
 
             }
 
         /* Step 2: Power */
 
-        for (int x = 0; x < long_ints.length; x++) {
+        for ( int x = 0; x < long_ints.length; x++ ) {
 
-            System.out.println("" + symbol[x] + " ^ " + 5 + "\n");
+            System.out.println( "" + symbol[ x ] + " ^ " + 5 + "\n" );
             long startTime_5 = System.nanoTime();
-            LongInt power_5 = long_ints[x].power(5);
+            LongInt power_5 = long_ints[ x ].power( 5 );
             power_5.print();
             long duration_5 = System.nanoTime() - startTime_5;
-            System.out.println("Running Time: " + duration_5 + " nanoseconds\n");
+            System.out.println( "Running Time: " + duration_5 + " nanoseconds\n" );
 
-            System.out.println("" + symbol[x] + " ^ " + 10 + "\n");
+            System.out.println( "" + symbol[ x ] + " ^ " + 10 + "\n" );
             long startTime_10 = System.nanoTime();
-            LongInt power_10 = long_ints[x].power(10);
+            LongInt power_10 = long_ints[ x ].power( 10 );
             power_10.print();
             long duration_10 = System.nanoTime() - startTime_10;
-            System.out.println("Running Time: " + duration_10 + " nanoseconds\n");
+            System.out.println( "Running Time: " + duration_10 + " nanoseconds\n" );
 
-            System.out.println("" + symbol[x] + " ^ " + 20 + "\n");
+            System.out.println( "" + symbol[ x ] + " ^ " + 20 + "\n" );
             long startTime_20 = System.nanoTime();
-            LongInt power_20 = long_ints[x].power(20);
+            LongInt power_20 = long_ints[ x ].power( 20 );
             power_20.print();
             long duration_20 = System.nanoTime() - startTime_20;
-            System.out.println("Running Time: " + duration_20 + " nanoseconds\n");
+            System.out.println( "Running Time: " + duration_20 + " nanoseconds\n" );
 
         }
 
         /* Step 2: Arithmetic Sequnces */
 
-        System.out.println("J = B + C \n");
+        System.out.println( "J = B + C \n" );
         long startTime_j = System.nanoTime();
-        LongInt j = b.add(c);
+        LongInt j = b.add( c );
         j.print();
         long duration_j = System.nanoTime() - startTime_j;
-        System.out.println("Running Time: " + duration_j + " nanoseconds\n");
+        System.out.println( "Running Time: " + duration_j + " nanoseconds\n" );
 
-        System.out.println("K = C + D \n");
+        System.out.println( "K = C + D \n" );
         long startTime_k = System.nanoTime();
-        LongInt k = c.add(d);
+        LongInt k = c.add( d );
         k.print();
         long duration_k = System.nanoTime() - startTime_k;
-        System.out.println("Running Time: " + duration_k + " nanoseconds\n");
+        System.out.println( "Running Time: " + duration_k + " nanoseconds\n" );
 
-        System.out.println("L = I + I \n");
+        System.out.println( "L = I + I \n" );
         long startTime_l = System.nanoTime();
-        LongInt l = i.add(i);
+        LongInt l = i.add( i );
         l.print();
         long duration_l = System.nanoTime() - startTime_l;
-        System.out.println("Running Time: " + duration_l + " nanoseconds\n");
+        System.out.println( "Running Time: " + duration_l + " nanoseconds\n" );
 
-        System.out.println("M = A + I \n");
+        System.out.println( "M = A + I \n" );
         long startTime_m = System.nanoTime();
-        LongInt m = a.add(i);
+        LongInt m = a.add( i );
         m.print();
         long duration_m = System.nanoTime() - startTime_m;
-        System.out.println("Running Time: " + duration_m + " nanoseconds\n");
+        System.out.println( "Running Time: " + duration_m + " nanoseconds\n" );
 
-        System.out.println("N = B + K \n");
+        System.out.println( "N = B + K \n" );
         long startTime_n = System.nanoTime();
-        LongInt n = b.add(k);
+        LongInt n = b.add( k );
         n.print();
         long duration_n = System.nanoTime() - startTime_n;
-        System.out.println("Running Time: " + duration_n + " nanoseconds\n");
+        System.out.println( "Running Time: " + duration_n + " nanoseconds\n" );
 
-        System.out.println("O = A - D \n");
+        System.out.println( "O = A - D \n" );
         long startTime_o = System.nanoTime();
-        LongInt o = a.subtract(d);
+        LongInt o = a.subtract( d );
         o.print();
         long duration_o = System.nanoTime() - startTime_o;
-        System.out.println("Running Time: " + duration_o + " nanoseconds\n");
+        System.out.println( "Running Time: " + duration_o + " nanoseconds\n" );
 
-        System.out.println("P = C - D \n");
+        System.out.println( "P = C - D \n" );
         long startTime_p = System.nanoTime();
-        LongInt p = c.subtract(d);
+        LongInt p = c.subtract( d );
         p.print();
         long duration_p = System.nanoTime() - startTime_p;
-        System.out.println("Running Time: " + duration_p + " nanoseconds\n");
+        System.out.println( "Running Time: " + duration_p + " nanoseconds\n" );
 
-        System.out.println("Q = D - C \n");
+        System.out.println( "Q = D - C \n" );
         long startTime_q = System.nanoTime();
-        LongInt q = d.subtract(c);
+        LongInt q = d.subtract( c );
         q.print();
         long duration_q = System.nanoTime() - startTime_q;
-        System.out.println("Running Time: " + duration_q + " nanoseconds\n");
+        System.out.println( "Running Time: " + duration_q + " nanoseconds\n" );
 
-        System.out.println("R = L - L \n");
+        System.out.println( "R = L - L \n" );
         long startTime_r = System.nanoTime();
-        LongInt r = l.subtract(l);
+        LongInt r = l.subtract( l );
         r.print();
         long duration_r = System.nanoTime() - startTime_r;
-        System.out.println("Running Time: " + duration_r + " nanoseconds\n");
+        System.out.println( "Running Time: " + duration_r + " nanoseconds\n" );
 
-        System.out.println("S = P - O \n");
+        System.out.println( "S = P - O \n" );
         long startTime_s = System.nanoTime();
-        LongInt s = p.subtract(o);
+        LongInt s = p.subtract( o );
         s.print();
         long duration_s = System.nanoTime() - startTime_s;
-        System.out.println("Running Time: " + duration_s + " nanoseconds\n");
+        System.out.println( "Running Time: " + duration_s + " nanoseconds\n" );
 
-        System.out.println("T = N - Q \n");
+        System.out.println( "T = N - Q \n" );
         long startTime_t = System.nanoTime();
-        LongInt t = n.subtract(q);
+        LongInt t = n.subtract( q );
         t.print();
         long duration_t = System.nanoTime() - startTime_t;
-        System.out.println("Running Time: " + duration_t + " nanoseconds\n");
+        System.out.println( "Running Time: " + duration_t + " nanoseconds\n" );
 
-        System.out.println("U = A * D \n");
+        System.out.println( "U = A * D \n" );
         long startTime_u = System.nanoTime();
-        LongInt u = a.multiply(d);
+        LongInt u = a.multiply( d );
         u.print();
         long duration_u = System.nanoTime() - startTime_u;
-        System.out.println("Running Time: " + duration_u + " nanoseconds\n");
+        System.out.println( "Running Time: " + duration_u + " nanoseconds\n" );
 
-        System.out.println("V = B * C \n");
+        System.out.println( "V = B * C \n" );
         long startTime_v = System.nanoTime();
-        LongInt v = b.multiply(c);
+        LongInt v = b.multiply( c );
         v.print();
         long duration_v = System.nanoTime() - startTime_v;
-        System.out.println("Running Time: " + duration_v + " nanoseconds\n");
+        System.out.println( "Running Time: " + duration_v + " nanoseconds\n" );
 
-        System.out.println("W = D * D \n");
+        System.out.println( "W = D * D \n" );
         long startTime_w = System.nanoTime();
-        LongInt w = d.multiply(d);
+        LongInt w = d.multiply( d );
         w.print();
         long duration_w = System.nanoTime() - startTime_w;
-        System.out.println("Running Time: " + duration_w + " nanoseconds\n");
+        System.out.println( "Running Time: " + duration_w + " nanoseconds\n" );
 
-        System.out.println("X = O * I \n");
+        System.out.println( "X = O * I \n" );
         long startTime_x = System.nanoTime();
-        LongInt x = o.multiply(i);
+        LongInt x = o.multiply( i );
         x.print();
         long duration_x = System.nanoTime() - startTime_x;
-        System.out.println("Running Time: " + duration_x + " nanoseconds\n");
+        System.out.println( "Running Time: " + duration_x + " nanoseconds\n" );
 
-        System.out.println("Y = J * P \n");
+        System.out.println( "Y = J * P \n" );
         long startTime_y = System.nanoTime();
-        LongInt y = j.multiply(p);
+        LongInt y = j.multiply( p );
         y.print();
         long duration_y = System.nanoTime() - startTime_y;
-        System.out.println("Running Time: " + duration_y + " nanoseconds\n");
+        System.out.println( "Running Time: " + duration_y + " nanoseconds\n" );
 
-        System.out.println("Z = M * N \n");
+        System.out.println( "Z = M * N \n" );
         long startTime_z = System.nanoTime();
-        LongInt z = m.multiply(n);
+        LongInt z = m.multiply( n );
         z.print();
         long duration_z = System.nanoTime() - startTime_z;
-        System.out.println("Running Time: " + duration_z + " nanoseconds\n");
+        System.out.println( "Running Time: " + duration_z + " nanoseconds\n" );
     }
 }
